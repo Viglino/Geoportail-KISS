@@ -1,4 +1,4 @@
-﻿Geoportail-KISS is licenced under the CeCILL-B FREE SOFTWARE LICENSE.
+﻿Geoportail-KISS is licenced under the French Opensource BSD like CeCILL-B FREE SOFTWARE LICENSE.
  (c) Jean-Marc Viglino, IGN-France
 
 Some resources (mapping services and API) used in this sofware may have a specific license.
