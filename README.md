@@ -1,6 +1,6 @@
 # Geoportail-KISS
 
-Geoportal-KISS is a simple way to integrate mapping services of the French Geoportal in the main JavaScript mapping API (OpenLayers, Leaflet, OL3, Google).
+Geoportail-KISS is a simple way to integrate mapping services of the French Geoportail in the main JavaScript mapping API (OpenLayers, Leaflet, OL3, Google).
 
 ## Openlayers
 - OpenLayers.Map.Geoportail : IGN's Geoportail Map 
@@ -17,7 +17,7 @@ Geoportal-KISS is a simple way to integrate mapping services of the French Geopo
 A simple way to access geocode and altimetric services
 
 ## jQGeoportail
-A jQuery plugin for Leflet Geoportal maps.
-- $("#mymap").geoportail(); // to creat a simple map in the "mymap" div
-- Maps in ".geoportalMap" divs are created on document load.
+A jQuery plugin for Leaflet Geoportail maps.
+- $("#mymap").geoportail(); // to create a simple map in the "mymap" div
+- Maps in ".geoportalMap" divs are automatly created on document load.
 
