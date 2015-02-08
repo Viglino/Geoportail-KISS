@@ -8,9 +8,15 @@
 	
 	Create a map in ".geoportalMap" div on document load.
 	
+	$("#map").mapReady ( function(map)
+	{	// Do something with the Leaflet map
+	}); 
+
+	
  */
 (function ( $ ) {
 
+/** Create a new map in the container */
 jQuery.fn.geoportail = function() 
 {
 	/** Get "data-coord"
@@ -281,11 +287,32 @@ jQuery.fn.geoportail = function()
 			if (geop.markers[i].html) m.bindPopup(geop.markers[i].html);//.openPopup();
 		}
 		
+		var cb = self.data("mapCallbacks");
+		if (cb) for (var i=0; i<cb.length; i++)
+		{	cb[i].apply(self,[map]);
+		}
+	});
+};
+
+/** Do somthing when the map is ready.
+	The callback function het the map as first argument.
+	The scope of the callback is the jQuery div that contains the map.
+*/
+jQuery.fn.mapReady = function(callback) 
+{	return this.each(function()
+	{	var self = $(this);
+		if (self.data("map")) callback.apply(self,[self.data("map")]);
+		else 
+		{	if (!self.data("mapCallbacks")) self.data("mapCallbacks")=[callback];
+			else self.data("mapCallbacks").push(callback);
+		}
 	});
 };
 
 }( jQuery ));
 
+/** Create the maps on load */
 $(document).ready ( function()
 {	$(".geoportalMap").geoportail(); 
 });
+
