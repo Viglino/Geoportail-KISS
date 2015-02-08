@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Utilisation des services Geoportail
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>Geoportail - Service altimetrique</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="../../openlayers/lib/theme/default/style.css" />
+	<script type="text/javascript" src="../../openlayers/lib/OpenLayers.debug.js"></script>
+	<link rel="stylesheet" href="../openlayers/geoportail.css" />
+	<link rel="stylesheet" href="../../style.css" />
+
+	<script type="text/javascript" src="../openlayers/geoportail.js"></script>
+	<script type="text/javascript" src="GeoportailService.js"></script>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<!--[if IE]><script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/excanvas.min.js"></script><![endif]-->
+    <script type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+    <!-- http://www.jqueryflottutorial.com/ -->
+	
+    <script type="text/javascript" src="../apikey.js"></script>
+
+	<style>
+	#autoc a,
+	#resp a
+	{	display:block;
+		padding:0 0.5em;
+		text-decoration:none;
+		cursor:pointer;
+	}
+	#autoc a:hover,
+	#resp a:hover
+	{	background-color:#369;
+		color:#fff;
+	}
+	</style>
+	
+	<script type="text/javascript">
+	var map; 
+	function initMap()
+	{	// Nouvelle carte
+		map = new OpenLayers.Map.Geoportail(apiKey, "map" );
+		map.addGeoportailLayers (["ORTHOIMAGERY.ORTHOPHOTOS","GEOGRAPHICALGRIDSYSTEMS.MAPS"])
+		
+		// Ajouter un controle pour les couches
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		map.setCenterAtLonlat([2.424, 48.845], 12);
+		
+		// Profil 3D
+		var p = new Profil3D(map, "#profil");
+	}
+	
+	var Profil3D = function(map, div)
+	{	var self = this;
+		
+		this.map = map;
+		this.wgs84 = new OpenLayers.Projection('EPSG:4326');
+		this.mproj = map.getProjectionObject();
+	
+		// Initialisation des layers
+		OpenLayers.Feature.Vector.style['default']['strokeWidth'] = '3';
+		this.coupeLayer = new OpenLayers.Layer.Vector("Coupe",{displayInLayerSwitcher:false});
+		map.addLayer (this.coupeLayer);
+		this.posLayer = new OpenLayers.Layer.Vector("pos",{displayInLayerSwitcher:false});
+		map.addLayer (this.posLayer);
+		
+		// Control pour la saisie d'une coupe
+		var c = new OpenLayers.Control.DrawFeature(this.coupeLayer, OpenLayers.Handler.Path,
+			{	featureAdded: function(f)
+				{	// N'en garder qu'une
+					var l = f.layer;
+					l.removeAllFeatures();
+					l.addFeatures(f);
+					self.posLayer.removeAllFeatures();
+					// Recuperer les points
+					self.calcProfil (f.geometry);
+				}
+			});
+		map.addControl(c);
+		c.activate();
+		
+		// Service altimetrique
+		this.service = new GeoportailService(map.gppKey, "proxy.php");
+		$.plot(div,[0,0])
+		
+		// Dessin du profil
+		this.calcProfil = function(geo)
+		{	// Longueur totale
+			var gl = geo.getGeodesicLength(this.mproj);
+			// console.log(gl);
+			geo = geo.components;
+			var lon=[], lat=[], l=[], d=0, d0;
+			/** /
+			// Limiter le nombre a environ 50 points (ou 75m)
+			var pas = Math.max (75, gl/50);
+			for (var i=0; i<geo.length; i++)
+			{	var p, p0, p1 = geo[i].clone();
+				if (i>0) 
+				{	//d = geo[i].distanceTo(geo[i-1]);
+					var line = new OpenLayers.Geometry.LineString([geo[i-1], geo[i]]);
+					d = line.getGeodesicLength(this.mproj);
+					d0 = l[l.length-1];
+				}
+				else d = d0 = 0;
+				var n = Math.round(d/pas);
+				if (n)
+				{	p0 = geo[i-1].clone();
+					for (var j=1; j<n; j++)
+					{	p = new OpenLayers.Geometry.Point (p0.x+(p1.x-p0.x)*j/n,p0.y+(p1.y-p0.y)*j/n)
+						l.push ( d0 + d*j/n );
+						p.transform(this.mproj,this.wgs84);
+						lon.push(p.x);
+						lat.push(p.y);
+					}
+				}
+				l.push(d0+d);
+				p1.transform(this.mproj,this.wgs84);
+				lon.push(p1.x);
+				lat.push(p1.y);
+			}
+			// Calcul des altitudes
+			this.service.altimetry (lon,lat, function(r)
+				{	$("#loading").hide();
+					$(div).css("opacity",1);
+					var data = [];
+					for (var i=0; i<r.length; i++)
+					{	data.push([ l[i]/1000, Math.max(0,r[i].z), r[i] ]);
+					}
+					$.plot(div, [ data ],
+						{	colors:["#369"],
+							lines: 
+							{	show:true, 
+								fill:$("#fill").is(":checked"),
+								fillColor: { colors: ["#369","#fff"] }
+							},
+							grid:
+							{	backgroundColor: { colors: ["#fff", "#eee"] },
+								hoverable: true,     
+								mouseActiveRadius: 10  //specifies how far the mouse can activate an item
+							},
+							xaxis:
+							{	axisLabel:"km"
+							}
+						})
+				});			
+			/*/
+			var d=0;
+			for (var i=0; i<geo.length; i++)
+			{	var p1 = geo[i].clone();
+				if (i>0) 
+				{	var line = new OpenLayers.Geometry.LineString([geo[i-1], geo[i]]);
+					d += line.getGeodesicLength(this.mproj);
+				}
+				p1.transform(this.mproj,this.wgs84);
+				lon.push(p1.x);
+				lat.push(p1.y);
+			}
+			// Un point tout les 40m et 5 points min et 100 points max;
+			var e = Math.max (5, Math.min (Math.round(d/40), 100));
+			
+			// Calcul des altitudes
+			this.service.altimetryLine (lon,lat,e, function(r)
+				{	$("#loading").hide();
+					$(div).css("opacity",1);
+					var data = [];
+					var l=0, p0, p1;
+					for (var i=0; i<r.length; i++)
+					{	p1 = new OpenLayers.Geometry.Point(r[i].lon,r[i].lat);
+						// Repartir sur la ligne en fonction de la distance au depart
+						if (i>0) 
+						{	var line = new OpenLayers.Geometry.LineString([p0,p1]);
+							l += line.getGeodesicLength(this.mproj);
+						}
+						p0 = p1;
+						data.push([ l, Math.max(0,r[i].z), r[i] ]);
+					}
+					$.plot(div, [ data ],
+						{	colors:["#369"],
+							lines: 
+							{	show:true, 
+								fill:$("#fill").is(":checked"),
+								fillColor: { colors: ["#369","#fff"] }
+							},
+							grid:
+							{	backgroundColor: { colors: ["#fff", "#eee"] },
+								hoverable: true,     
+								mouseActiveRadius: 10  //specifies how far the mouse can activate an item
+							},
+							xaxis:
+							{	axisLabel:"km"
+							}
+						})
+				});
+			/**/
+											
+			$("#loading").show();
+			$(div).css("opacity",0.3);
+			
+			// Gestion de la souris sur le graphique
+			var index = -1;
+			$(div).bind("plothover", function (event, pos, item) 
+			{	if (item && item.dataIndex != index) 
+				{	index = item.dataIndex;
+					var pt = item.series.data[item.dataIndex][2]
+					var p = new OpenLayers.Geometry.Point (pt.lon,pt.lat);
+					p.transform(self.wgs84,self.mproj);
+					self.posLayer.removeAllFeatures();
+					self.posLayer.addFeatures
+					(	new OpenLayers.Feature.Vector(p, {},
+						{	fillColor : '#e90',
+							fillOpacity : 0.8,                    
+							strokeColor : "#e90",
+							strokeOpacity : 0.5,
+							strokeWidth : 15,
+							pointRadius : 5
+						}));
+					if ($("#move").is(":checked")) map.setCenter([p.x,p.y]);
+				}
+				else index = -1;
+			});
+		}
+	}
+	</script>
+</head>
+<body onload="initMap()" style="color:#036">
+
+	<h1>Géoportail - Service altimétrique</h1>
+	<p class="info" style="display:table; min-width:500px;">
+		Calcul des altitude le long d'une ligne.<br />
+		Utilise l'<a href="http://depot.ign.fr/geoportail/api/develop/tech-docs-js/fr/developpeur/alti.html">API REST du Géoportail</a><br />
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+	</p>
+
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px; float:left;"></div>
+	<div style="display:inline-block; padding:0 0.5em;">
+		<h2 style="margin:0 1em; ">Profil</h2>
+		<div id="loading" style="color:#369; display:none; font-weight:bold; position:absolute; background-color:#fff;  margin:10px 30px;">
+			Chargement <img src="load.gif" style="vertical-align:middle; margin-left:1em; " />
+		</div>
+		<div id="profil" style="display:inline-block; width:600px; height:200px;"></div>
+		<br />
+		<input id="move" type="checkbox" checked style="margin-left:1em" /><label for="move">déplacer la carte</label>
+		<input id="fill" type="checkbox" style="margin-left:1em" /><label for="fill">remplir</label>
+		<div style="border:1px solid #369; margin-top:0.5em; padding:0.5em;">
+			<p style="margin:5px 0;">
+				Utilisation du service altimétrique du géoportail pour afficher un profil en long d'une trace.	
+			</p>
+			Instructions :
+			<ol style="margin:0; padding:0 auto">
+				<li>Saisissez une ligne sur la carte (doucle-clic pour terminer)</li>
+				<li>Déplacez-vous sur le profil pour afficher les points.</li>
+			</ol>
+		</div>
+	</div>
+</body>
+</html>

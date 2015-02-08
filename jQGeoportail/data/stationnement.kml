@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Parking et stationnement IGN</name>
+  <description><![CDATA[Cette carte montre :
+- les zones de stationnement à proximité de l'IGN
+- les stations Vélib
+- les parkings publics]]></description>
+  <Style id="style4">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>A60066FF</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style49">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>A60066FF</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style28">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>A6CC66CC</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style53">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style15">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style6">
+    <LineStyle>
+      <color>FFFFCC33</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style45">
+    <LineStyle>
+      <color>FFFFCC33</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style55">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style26">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style40">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style9">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style22">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style17">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style54">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style46">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style61">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style57">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style23">
+    <LineStyle>
+      <color>FF0066FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style30">
+    <LineStyle>
+      <color>FF0000FF</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style35">
+    <LineStyle>
+      <color>FF33FF33</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style8">
+    <LineStyle>
+      <color>FF33FF33</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style1">
+    <LineStyle>
+      <color>FFFFCC33</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style32">
+    <LineStyle>
+      <color>FFFFCC33</color>
+      <width>5</width>
+    </LineStyle>
+  </Style>
+  <Style id="style48">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FFCC33</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style12">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>A60000CC</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style10">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>A60000CC</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style13">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FFCC33</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style37">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/homegardenbusiness.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style27">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style50">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style31">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style36">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style60">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style18">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style39">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style47">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style56">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style20">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style19">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/cycling.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style33">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/grn-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style2">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/grn-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style52">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/grn-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style3">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/grn-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style38">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.gstatic.com/intl/fr_fr/mapfiles/ms/micons/ltblu-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style21">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ltblu-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style58">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ltblu-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style24">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ltblu-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style29">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style25">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style43">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style11">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style34">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/red-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style42">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/purple-pushpin.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style7">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style41">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style16">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style5">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style44">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style51">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style14">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+  <Style id="style59">
+    <IconStyle>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/ms/micons/parkinglot.png</href>
+      </Icon>
+    </IconStyle>
+  </Style>
+
+  <Placemark>
+    <name>Avenue Pasteur</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant</div>]]></description>
+    <styleUrl>#style53</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.423118,48.843727,0.000000
+        2.423593,48.845810,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue Pasteur</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant. Le côté pair de l&apos;avenue Pasteur sera en grande partie neutralisée lorsque commenceront les travaux OPAC (octobre 2009)</div>]]></description>
+    <styleUrl>#style15</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.423505,48.845028,0.000000
+        2.423140,48.843369,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Route de la Tourelle</name>
+    <description><![CDATA[<div dir="ltr">Stationnement gratuit mais peu de places</div>]]></description>
+    <styleUrl>#style6</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.421579,48.844597,0.000000
+        2.422249,48.844280,0.000000
+        2.422555,48.843994,0.000000
+        2.422845,48.843647,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue du Bel Air</name>
+    <description><![CDATA[<div dir="ltr">Stationnement gratuit mais peu de places</div>]]></description>
+    <styleUrl>#style45</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.420251,48.843445,0.000000
+        2.421753,48.843323,0.000000
+        2.422115,48.843273,0.000000
+        2.422378,48.843208,0.000000
+        2.422721,48.843094,0.000000
+        2.422936,48.842995,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue Gambetta</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant</div>]]></description>
+    <styleUrl>#style55</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.421072,48.844936,0.000000
+        2.422923,48.845818,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue Antoine Quinson</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant (Vincennes)</div>]]></description>
+    <styleUrl>#style26</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.424728,48.846226,0.000000
+        2.426122,48.846687,0.000000
+        2.427185,48.846958,0.000000
+        2.427630,48.847061,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue Antoine Quinson</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant (Vincennes)</div>]]></description>
+    <styleUrl>#style40</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.424958,48.846241,0.000000
+        2.425768,48.846523,0.000000
+        2.426294,48.846676,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Rue Victor Basch</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant (Vincennes)</div>]]></description>
+    <styleUrl>#style9</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.427807,48.846943,0.000000
+        2.428322,48.846306,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Rue Victor Basch</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant (Vincennes)</div>]]></description>
+    <styleUrl>#style22</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.427877,48.846962,0.000000
+        2.428306,48.846413,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue des Minimes</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant (Saint-Mandé et Vincennes)</div>]]></description>
+    <styleUrl>#style17</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.425602,48.841785,0.000000
+        2.430556,48.841351,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue des Minimes</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant depuis octobre 2009</div>]]></description>
+    <styleUrl>#style54</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.425098,48.841743,0.000000
+        2.432120,48.841129,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Chaussée de l&#39;étang</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant</div>]]></description>
+    <styleUrl>#style46</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.421555,48.844398,0.000000
+        2.421541,48.844337,0.000000
+        2.421490,48.844292,0.000000
+        2.419996,48.843571,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Chaussée de l&#39;étang</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant</div>]]></description>
+    <styleUrl>#style61</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.420053,48.843559,0.000000
+        2.421471,48.844231,0.000000
+        2.421651,48.844318,0.000000
+        2.421708,48.844334,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Chaussée de l&#39;étang</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant</div>]]></description>
+    <styleUrl>#style57</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.419809,48.843369,0.000000
+        2.419817,48.843243,0.000000
+        2.419760,48.843040,0.000000
+        2.419678,48.842941,0.000000
+        2.419570,48.842850,0.000000
+        2.419377,48.842655,0.000000
+        2.419327,48.842571,0.000000
+        2.419303,48.842487,0.000000
+        2.419298,48.842266,0.000000
+        2.419403,48.841709,0.000000
+        2.419532,48.841339,0.000000
+        2.419607,48.841209,0.000000
+        2.419690,48.841106,0.000000
+        2.419894,48.840904,0.000000
+        2.420146,48.840683,0.000000
+        2.420289,48.840504,0.000000
+        2.420428,48.840267,0.000000
+        2.420683,48.839729,0.000000
+        2.420863,48.839241,0.000000
+        2.420975,48.838951,0.000000
+        2.421072,48.838642,0.000000
+        2.421265,48.837830,0.000000
+        2.421370,48.837288,0.000000
+        2.421455,48.836910,0.000000
+        2.421662,48.836479,0.000000
+        2.421989,48.835930,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Chaussée de l&#39;étang</name>
+    <description><![CDATA[<div dir="ltr">Stationnement payant</div>]]></description>
+    <styleUrl>#style23</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.419900,48.843330,0.000000
+        2.419898,48.843235,0.000000
+        2.419872,48.843140,0.000000
+        2.419819,48.843021,0.000000
+        2.419731,48.842918,0.000000
+        2.419454,48.842648,0.000000
+        2.419394,48.842533,0.000000
+        2.419370,48.842255,0.000000
+        2.419444,48.841858,0.000000
+        2.419567,48.841434,0.000000
+        2.419656,48.841263,0.000000
+        2.419763,48.841118,0.000000
+        2.420047,48.840847,0.000000
+        2.420193,48.840729,0.000000
+        2.420407,48.840435,0.000000
+        2.420616,48.840069,0.000000
+        2.420761,48.839760,0.000000
+        2.420911,48.839397,0.000000
+        2.421053,48.839012,0.000000
+        2.421171,48.838627,0.000000
+        2.421297,48.838081,0.000000
+        2.421394,48.837597,0.000000
+        2.421482,48.837170,0.000000
+        2.421560,48.836903,0.000000
+        2.421756,48.836479,0.000000
+        2.422067,48.835953,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue Daumesnil</name>
+    <description><![CDATA[<div dir="ltr">Stationnement fréquent, normalement interdit mais toléré...</div>]]></description>
+    <styleUrl>#style30</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.422140,48.835892,0.000000
+        2.422240,48.835892,0.000000
+        2.423380,48.836430,0.000000
+        2.424310,48.836941,0.000000
+        2.425296,48.837662,0.000000
+        2.426659,48.838394,0.000000
+        2.428172,48.838963,0.000000
+        2.429641,48.839394,0.000000
+        2.433633,48.840458,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue du Polygone</name>
+    <description><![CDATA[<div dir="ltr">Stationnement gratuit, nombreuses places disponibles</div>]]></description>
+    <styleUrl>#style35</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.432045,48.839657,0.000000
+        2.431275,48.835701,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Avenue du Polygone</name>
+    <description><![CDATA[<div dir="ltr">Stationnement gratuit, nombreuses places disponibles</div>]]></description>
+    <styleUrl>#style8</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.431431,48.835686,0.000000
+        2.432195,48.839661,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Cours des maréchaux</name>
+    <description><![CDATA[<div dir="ltr">Stationnement gratuit mais peu de places</div>]]></description>
+    <styleUrl>#style1</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.438651,48.840736,0.000000
+        2.438994,48.842403,0.000000
+        2.438376,48.842453,0.000000
+        2.438021,48.840778,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Cours des maréchaux</name>
+    <description><![CDATA[<div dir="ltr">Stationnement gratuit mais peu de places</div>]]></description>
+    <styleUrl>#style32</styleUrl>
+    <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+        2.437881,48.840748,0.000000
+        2.438286,48.842617,0.000000
+        2.439020,48.842560,0.000000
+        2.439330,48.844086,0.000000
+      </coordinates>
+    </LineString>
+  </Placemark>
+  <Placemark>
+    <name>Esplanade Saint-Louis</name>
+    <description><![CDATA[<div dir="ltr">Zone de stationnement <br>gratuit</div>]]></description>
+    <styleUrl>#style48</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            2.434453,48.840405,0.000000
+            2.436559,48.840061,0.000000
+            2.436143,48.839596,0.000000
+            2.435998,48.839573,0.000000
+            2.434783,48.839664,0.000000
+            2.434413,48.840324,0.000000
+            2.434453,48.840405,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Avenue des Minimes (Ouest esplanade)</name>
+    <description><![CDATA[<div dir="ltr">Zone de stationnement neutralisé depuis octobre 2009</div>]]></description>
+    <styleUrl>#style12</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            2.432536,48.841068,0.000000
+            2.432461,48.840813,0.000000
+            2.433842,48.840740,0.000000
+            2.433059,48.840900,0.000000
+            2.432536,48.841068,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Avenue des Minimes (Est esplanade)</name>
+    <description><![CDATA[<div dir="ltr">Zone de stationnement neutralisée</div>]]></description>
+    <styleUrl>#style10</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            2.436900,48.840591,0.000000
+            2.436880,48.840511,0.000000
+            2.438410,48.840370,0.000000
+            2.438525,48.840401,0.000000
+            2.438638,48.840656,0.000000
+            2.438005,48.840698,0.000000
+            2.437970,48.840611,0.000000
+            2.437940,48.840530,0.000000
+            2.437850,48.840500,0.000000
+            2.436900,48.840591,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Route de la pyramide _ Parc Floral</name>
+    <description><![CDATA[<div dir="ltr">Zone de stationnement gratuite. Attention aux périodes de concours (mai) et d&apos;expos.</div>]]></description>
+    <styleUrl>#style13</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            2.437508,48.838970,0.000000
+            2.437468,48.839088,0.000000
+            2.437798,48.839199,0.000000
+            2.441172,48.836693,0.000000
+            2.444490,48.834206,0.000000
+            2.444061,48.834152,0.000000
+            2.437508,48.838970,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 12125</name>
+    <description><![CDATA[<div dir="ltr">PYRAMIDE ENTREE PARC FLORAL<br>Pour une description complète de la station, <a href="http://www.velib.paris.fr/trouver_une_station/%28id%29/12125"><span style="font-weight:bold">cliquez ici</span></a>.</div>]]></description>
+    <styleUrl>#style27</styleUrl>
+    <Point>
+      <coordinates>2.440789,48.836842,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 12124</name>
+    <description><![CDATA[ROUTE DE L'ARTILLERIE<br>Pour une description complète de la station, <a href="http://www.velib.paris.fr/trouver_une_station/%28id%29/12124"><span style="font-weight:bold">cliquez ici</span></a>.]]></description>
+    <styleUrl>#style50</styleUrl>
+    <Point>
+      <coordinates>2.438144,48.839382,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 12123</name>
+    <description><![CDATA[<DIV dir="ltr">COURS DES MARECHAUX<BR>Pour une description complète de la station, <A href="http://www.velib.paris.fr/trouver_une_station/%28id%29/12123"><SPAN style="font-weight:bold">cliquez ici</SPAN></A>.</DIV>]]></description>
+    <styleUrl>#style31</styleUrl>
+    <Point>
+      <coordinates>2.439281,48.844231,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 12115</name>
+    <description><![CDATA[<div dir="ltr">22 AVENUE DE LA PORTE DE VINCENNES<br>Pour une description complète de la station, <a href="http://www.velib.paris.fr/trouver_une_station/%28id%29/12115"><span style="font-weight:bold">cliquez ici</span></a>.</div>]]></description>
+    <styleUrl>#style36</styleUrl>
+    <Point>
+      <coordinates>2.415404,48.846439,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 12114</name>
+    <description><![CDATA[<div dir="ltr">33 AVENUE COURTELINE<br>Pour une description complète de la station, <a href="http://www.velib.paris.fr/trouver_une_station/%28id%29/12114"><span style="font-weight:bold">cliquez ici</span></a>.</div>]]></description>
+    <styleUrl>#style60</styleUrl>
+    <Point>
+      <coordinates>2.414841,48.844021,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 41603</name>
+    <description><![CDATA[<div dir="ltr">Angle avenue Pasteur / avenue de Paris</div>]]></description>
+    <styleUrl>#style18</styleUrl>
+    <Point>
+      <coordinates>2.423601,48.845783,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 41602</name>
+    <description><![CDATA[<div dir="ltr">Place Charles Digeon - Mairie de Saint-Mandé</div>]]></description>
+    <styleUrl>#style39</styleUrl>
+    <Point>
+      <coordinates>2.418151,48.843437,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 43001</name>
+    <description><![CDATA[<div dir="ltr">Métro Saint-Mandé</div>]]></description>
+    <styleUrl>#style47</styleUrl>
+    <Point>
+      <coordinates>2.420661,48.846218,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 43003</name>
+    <description><![CDATA[<div dir="ltr">Métro Bérault</div>]]></description>
+    <styleUrl>#style56</styleUrl>
+    <Point>
+      <coordinates>2.427721,48.845669,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 43005</name>
+    <description><![CDATA[18 AVENUE AUBERT (RER A station Vincennes)<br>49 emplacements Vélib<br>Pour une description complète de la station, <a style="font-weight:bold" href="http://www.velib.paris.fr/trouver_une_station/%28id%29/43005">cliquez ici</a>.<br>]]></description>
+    <styleUrl>#style20</styleUrl>
+    <Point>
+      <coordinates>2.433150,48.847469,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Station Vélib 43006</name>
+    <description><![CDATA[<div dir="ltr">30 avenue des Minimes à Vincennes<br>28 emplacements<br>Pour une description complète de la station, <a style="font-weight:bold" href="http://www.velib.paris.fr/trouver_une_station/%28id%29/43006">cliquez ici</a><br></div>]]></description>
+    <styleUrl>#style19</styleUrl>
+    <Point>
+      <coordinates>2.430792,48.841377,0.000000</coordinates>
+    </Point>
+  </Placemark>
+
+  <Placemark>
+    <name>Parking Digeon</name>
+    <description><![CDATA[<div dir="ltr">Place Charles Digeon, Saint-Mandé</div>]]></description>
+    <styleUrl>#style7</styleUrl>
+    <Point>
+      <coordinates>2.417974,48.843536,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Sacrot</name>
+    <description><![CDATA[<div dir="ltr">Angle rues Sacrot et Guynemer, Saint-Mandé</div>]]></description>
+    <styleUrl>#style41</styleUrl>
+    <Point>
+      <coordinates>2.416048,48.840027,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Sainte-Marie</name>
+    <description><![CDATA[<div dir="ltr">20 boulevard de la Guyane, Saint-Mandé<br></div>]]></description>
+    <styleUrl>#style16</styleUrl>
+    <Point>
+      <coordinates>2.412701,48.835911,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Centre Pompidou</name>
+    <description><![CDATA[<div dir="ltr">168 rue de Fontenay, Vincennes</div>]]></description>
+    <styleUrl>#style5</styleUrl>
+    <Point>
+      <coordinates>2.435081,48.848297,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Coeur de ville</name>
+    <description><![CDATA[<div dir="ltr">Avenue de Vorges, Vincennes</div>]]></description>
+    <styleUrl>#style44</styleUrl>
+    <Point>
+      <coordinates>2.439716,48.848648,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Mowat</name>
+    <description><![CDATA[<div dir="ltr">16 rue du Commandant Mowat, Vincennes</div>]]></description>
+    <styleUrl>#style51</styleUrl>
+    <Point>
+      <coordinates>2.446024,48.848904,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Hotel de Ville</name>
+    <description><![CDATA[<div dir="ltr">Place du Général Leclerc, Vincennes</div>]]></description>
+    <styleUrl>#style14</styleUrl>
+    <Point>
+      <coordinates>2.439238,48.847317,0.000000</coordinates>
+    </Point>
+  </Placemark>
+  <Placemark>
+    <name>Parking Marigny</name>
+    <description><![CDATA[<div dir="ltr">Cours Marigny, Vincennes</div>]]></description>
+    <styleUrl>#style59</styleUrl>
+    <Point>
+      <coordinates>2.439517,48.845329,0.000000</coordinates>
+    </Point>
+  </Placemark>
+</Document>
+</kml>

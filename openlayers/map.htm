@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Affichage d'une carte Geoportail avec OpenLayers.js
+	Utilisation d'une couche geoportail.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS OpenLayers-Geoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="../../style.css" />
+
+	<link rel="stylesheet" href="http://dev.openlayers.org/theme/default/style.css" />
+	<script type="text/javascript" src="http://dev.openlayers.org/OpenLayers.js"></script>
+	
+	<script type="text/javascript" src="../apikey.js"></script>
+	<script type="text/javascript" src="../geoportailconfig.js"></script>
+	<link rel="stylesheet" href="geoportail.css" />
+	<script type="text/javascript" src="geoportail.js"></script>
+	
+	<script type="text/javascript">
+	var map; 
+	function initMap()
+	{	// Nouvelle carte
+		map = new OpenLayers.Map.Geoportail(apiKey, "map", { allOverlays:true } );
+
+		// BaseLayer (pour definition des niveaux de zoom)
+		map.addGeoportailLayers ("BASELAYER");
+		// Photo aeriennes
+		map.addGeoportailLayers ("ORTHOIMAGERY.ORTHOPHOTOS",  { visibility:true });
+		// Carte IGN, etc.
+		map.addGeoportailLayers (["GEOGRAPHICALGRIDSYSTEMS.MAPS", "CADASTRALPARCELS.PARCELS", "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD", "GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40"]);
+
+		// OSM
+		var osm = new OpenLayers.Layer.OSM();
+		osm.setVisibility(false);
+		map.addLayer ( osm );
+		
+		// Ajouter un controle pour les couches
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		 
+		// Centrer la carte
+		var WGS84 = new OpenLayers.Projection('EPSG:4326');
+		//map.setCenter(new OpenLayers.LonLat(2.424, 48.845).transform(WGS84, map.getProjectionObject()), 15);
+		map.setCenterAtLonlat([2.424, 48.845], 15);
+	}
+	</script>
+</head>
+<body onload="initMap()">
+
+	<h1>OpenLayers-Géoportail</h1>
+	<p class="info">
+		Affichage de couches Géoportail avec l'API OpenLayers.<br />
+		L'affichage passe par la définition d'une couche Géoportail pour OpenLayers : OpenLayers.Layer.Geoportail<br />
+		et d'une carte intégrant la clé Géoportail : OpenLayers.Map.Geoportail<br />
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+		<br />
+		<a href="javascript:map.setCenterAtLonlat([55.53,-21.13],10)">Aller à la Réunion</a> -
+		<a href="javascript:map.setCenterAtLonlat([2.424, 48.845],15)">Retour à St-Mandé</a>
+	</p>
+
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px;"></div>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Utilisation des services Geoportail
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>Geoportail - Service de geocodage</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="http://openlayers.org/dev/theme/default/style.css" />
+	<script type="text/javascript" src="http://openlayers.org/dev/OpenLayers.debug.js"></script>
+	<link rel="stylesheet" href="../openlayers/geoportail.css" />
+
+	<script type="text/javascript" src="../openlayers/geoportail.js"></script>
+	<script type="text/javascript" src="GeoportailService.js"></script>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<script type="text/javascript" src="../apikey.js"></script>
+	
+	<style>
+	#autoc a,
+	#resp a
+	{	display:block;
+		padding:0 0.5em;
+		text-decoration:none;
+		cursor:pointer;
+	}
+	#autoc a:hover,
+	#resp a:hover
+	{	background-color:#369;
+		color:#fff;
+	}
+	</style>
+	
+	<script type="text/javascript">
+	var map; 
+	var service;
+	function initMap()
+	{	// Nouvelle carte
+		map = new OpenLayers.Map.Geoportail(apiKey, "map" );
+		map.addGeoportailLayers (["GEOGRAPHICALGRIDSYSTEMS.MAPS","ORTHOIMAGERY.ORTHOPHOTOS"])
+		
+		// Ajouter un controle pour les couches
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		map.setCenterAtLonlat([2.424, 48.845], 15);
+		
+		// Service de geocodage
+		service = new GeoportailService(apiKey);
+		$("#query")
+			// Autocompletion
+			.keyup(function(e)
+			{	var t = $(this).val();
+				if (t.length>3)
+				{	service.autocomplete(t, function(r) 
+					{	if (r && r.length)
+						{	var auto = $("#autoc").html("").show();
+							for (var i=0; i<r.length; i++)
+							{	var a = $("<a>")
+									.click(function()
+									{	$("#query").val($(this).text());
+										$("#autoc").hide();
+										$("#resp").html("");
+										$("#query").change();
+									})
+									.text(r[i].fulltext)
+									.appendTo(auto);
+							}
+						}
+						else $("#autoc").hide("");
+					},
+					{	poi: $("#poi").is(":checked"),
+						adresse: $("#adresse").is(":checked")
+					});
+				}
+				else $("#autoc").hide("");
+			})
+			// Geocodage
+			.change(function()
+			{	service.geocode($(this).val(), function(r) 
+					{	var a, html = "";
+						if (r && r.length)
+						{	map.setCenterAtLonlat([r[0].lon,r[0].lat]);
+							t = r.length +" réponses :";
+							for (var i=0; i<r.length; i++)
+							{	a = r[i];
+								html += "<a href='javascript:map.setCenterAtLonlat(["+a.lon+","+a.lat+"])'>"
+									+ (a.adresse.num?a.adresse.num:"") + " "
+									+ a.adresse.rue + " " + a.place.commune +" ("+a.place.departement+") "
+									+ a.place.nature
+									+"</a>";
+							}
+						}
+						else t = "<i>Pas de réponse...</i>";
+						$("#resp").html(html);
+						$("#autoc").hide();
+					}, 
+					{	max:20,
+						poi: $("#poi").is(":checked"),
+						adresse: $("#adresse").is(":checked")
+					});
+			});
+	}
+	</script>
+</head>
+<body onload="initMap()">
+
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px; float:left;"></div>
+	<div style="display:inline-block; padding:0 0.5em">
+		<p style="margin:0;">Rechercher :</p>
+		<input id="adresse" type="checkbox" checked /><label for="adresse"> adresse</label>
+		<input id="poi" type="checkbox" /><label for="poi"> POI</label>
+		<br />
+		<input id="query" type="text" placeholder="Rechercher..." style="width:300px;" />
+		<div id="autoc" style="width:290px; clear:both; margin-left:10px; border:1px solid #369; padding:0 2px; display:none"></div>
+		<div id="resp" style="width:300px; clear:both;"></div>
+	</div>
+</body>
+</html>

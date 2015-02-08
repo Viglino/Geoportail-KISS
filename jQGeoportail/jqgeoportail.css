@@ -1,0 +1,26 @@
+.geoportalMap
+{	background:url(img/logo-geoportail.png) no-repeat center;
+}
+/* Hide div inside */
+.geoportalMap .geoportalContainer
+{	display:none;
+}
+/* Default layer display values */
+.geoportalMap .geoportalLayer,
+.geoportalMap .geoportalOverlay
+{	visibility: hidden;
+}
+.geoportalMap .geoportalFile,
+.geoportalMap .geoportalPin,
+.geoportalMap .geoportalCircle
+{	color:#03f;
+	background-color:#03f;
+	opacity:0.5;
+	width:5px;
+}
+/* Popup Style */
+.leaflet-popup h1 
+{	font-size:1em;
+	color: #369;
+	margin: 0;
+}

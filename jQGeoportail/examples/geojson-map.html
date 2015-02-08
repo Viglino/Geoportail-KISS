@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Affichage KISS d'une carte Geoportail avec Leaflet.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS jQuery-Géoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<!-- Leaflet and Leaflet plugins -->
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<script type="text/javascript" src="http://leafletjs.com/dist/leaflet.js"></script>
+	
+	<script type="text/javascript" src="../../geoportailconfig.js"></script>
+	<script type="text/javascript" src="../togeojson.js"></script>
+	<link rel="stylesheet" href="../../leaflet/geoportail.css" />
+	<script type="text/javascript" src="../../leaflet/geoportail.js"></script>
+
+	<!-- jQGeoportail -->
+	<link rel="stylesheet" href="../jqgeoportail.css" />
+	<script type="text/javascript" src="../jqgeoportail.js"></script>
+
+	<link rel="stylesheet" href="../../../style.css" />
+	<style>
+		.geoportalMap
+		{	width:600px; 
+			height:400px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>KISS-Géoportail</h1>
+	<p class="info">
+		Une carte avec un fichier GeoJSON.<br/>
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+	</p>
+
+	<!-- DIV pour la carte -->
+	<div class="geoportalMap" data-apikey="optui97glo4zd4ow3hfxp0ge" data-coord="48.845,2.424,15" data-layer="PHOTO|MAP|OSM">
+		<!-- Mes Layers -->
+		<ul class="geoportalContainer">
+			<li>
+				<a title="Vlib" class="geoportalFile"
+				   href="../data/vlib.geojson"
+				   data-popup="true"
+				   style="opacity:0.6; color:#0F0; background-color:#0F0; width:3px;"></a>
+			</li>
+		</ul>
+	</div>
+	
+<!-- CODE -->
+<pre style="background:#fff;color:#000; border:1px solid #369; display:inline-block; padding:0.5em 1em;">
+&lt;div class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalMap"</span> <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>apikey<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"optui97glo4zd4ow3hfxp0ge"</span> <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>coord<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"48.845,2.424,15"</span> <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>layer<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"PHOTO|MAP|OSM"</span>>
+    &lt;<span style="color:#0100b6;font-weight:700">!</span><span style="color:#0100b6;font-weight:700">-</span><span style="color:#0100b6;font-weight:700">-</span> Mes Layers <span style="color:#0100b6;font-weight:700">-</span><span style="color:#0100b6;font-weight:700">-</span>>
+    &lt;ul class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalContainer"</span>>
+        &lt;li>
+            &lt;a <span style="color:#3c4c72;font-weight:700">title</span><span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"Vlib"</span> class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalFile"</span>
+               href<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"../data/vlib.geojson"</span>
+               <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>popup<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"true"</span>
+               style<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"opacity:0.6; color:#0F0; background-color:#0F0; width:3px;"</span>>&lt;<span style="color:#0100b6;font-weight:700">/</span>a>
+        &lt;<span style="color:#0100b6;font-weight:700">/</span>li>
+    &lt;<span style="color:#0100b6;font-weight:700">/</span>ul>
+&lt;<span style="color:#0100b6;font-weight:700">/</span>div>
+</pre>
+</body>
+</html>

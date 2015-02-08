@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the WTFPL license (http://www.wtfpl.net/txt/copying/).
+	
+	Affichage d'une carte Geoportail avec l'API Google v3
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS Google Maps-Geoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<style>
+		.attribution
+		{	background-color:rgba(255,255,255,0.5);
+			padding:0 6px;
+			color:#444444;
+			font-size:10px;
+		}
+		.attribution:hover
+		{	background-color:rgba(255,255,255,0.8);
+		}
+	</style>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+
+	<script type="text/javascript" src="../apikey.js"></script>
+
+	<script type="text/javascript">
+
+		// L'url des services Geoportail
+		function geoportailLayer(name, key, layer, options) 
+		{	var l= new google.maps.ImageMapType
+			({	getTileUrl: function (coord, zoom)
+					{	return "http://wxs.ign.fr/" + key + "/geoportail/wmts?LAYER=" + layer
+							+ "&EXCEPTIONS=text/xml&FORMAT="+(options.format?options.format:"image/jpeg")
+							+ "&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE="+(options.style?options.style:"normal")+"&TILEMATRIXSET=PM"
+							+ "&TILEMATRIX=" + zoom + "&TILECOL=" + coord.x + "&TILEROW=" + coord.y;
+					},
+				tileSize: new google.maps.Size(256,256),
+				name: name,
+				minZoom: (options.minZoom ? options.minZoom:0),
+				maxZoom: (options.maxZoom ? options.maxZoom:18)
+			});
+			l.attribution = ' &copy; <a href="http://www.ign.fr/">IGN-France</a>';
+			return l;
+		}
+		function geoportailSetAttribution (map, attributionDiv)
+		{	if (map.mapTypes.get(map.getMapTypeId()).attribution)
+			{	attributionDiv.style.display = 'block';
+				attributionDiv.innerHTML = map.mapTypes.get(map.getMapTypeId()).name+map.mapTypes.get(map.getMapTypeId()).attribution;
+			}
+			else attributionDiv.style.display = 'none';            
+		}
+
+		var amp;
+	    // Initialisation de la carte
+		function initMap() 
+		{	// La carte Google
+			map = new google.maps.Map( document.getElementById('map'), 
+			{	mapTypeId: 'carte',
+				streetViewControl: false,
+				mapTypeControlOptions: { mapTypeIds: ['carte', 'photos', 'topoExpress', 'etatMajor', google.maps.MapTypeId.ROADMAP] },
+				center: new google.maps.LatLng(48.845, 2.424),
+				zoom: 15
+			});
+			
+			/** Definition des couches  */
+			// Carte IGN 
+			map.mapTypes.set('carte', geoportailLayer("Carte IGN", apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS", { maxZoom:18 }));
+			// Photo aeriennes
+			map.mapTypes.set('photos', geoportailLayer("Photos Aériennes", apiKey, "ORTHOIMAGERY.ORTHOPHOTOS", { maxZoom:19 }));
+			// Scan Express Standard
+			map.mapTypes.set('topoExpress', geoportailLayer("Topo Express", apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD",  { maxZoom:18 }));
+			// Etat major
+			map.mapTypes.set('etatMajor', geoportailLayer("Etat Major", apiKey, "GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40",  { maxZoom:15 }));
+			
+			// Parcelles en overlay
+			map.overlayMapTypes.push(geoportailLayer("cadastre", apiKey, "CADASTRALPARCELS.PARCELS",  { maxZoom:20, format:"image/png", style:'bdparcellaire' } ));
+
+			// Ajouter un control pour l'attribution
+            var attributionDiv = document.createElement('div');
+            attributionDiv.className = "attribution";
+			geoportailSetAttribution(map, attributionDiv);
+			map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(attributionDiv);
+            // Afficher / masquer le copyright en fonction de la couche
+			google.maps.event.addListener(map, 'maptypeid_changed', 
+				function()
+				{	geoportailSetAttribution(this, attributionDiv);
+				});
+			
+			// Ajouter une punaise 
+			var infowindow = new google.maps.InfoWindow ({ content: "<a href='http://fr.wikipedia.org/wiki/Principe_KISS' style='font-weight:bold;'>KISS !</a><br />I am a popup." });
+			var marker = new google.maps.Marker
+				({	position: new google.maps.LatLng(48.84475, 2.4237),
+					map: map
+				});
+			google.maps.event.addListener(marker, 'click', 
+				function() 
+				{	infowindow.open(map,marker);
+				});
+			infowindow.open(map,marker);
+
+		}
+	    
+		google.maps.event.addDomListener(window, 'load', initMap);
+	</script>
+
+</head>
+
+<body>
+  <div id="map" style="width:600px; height:400px;"></div>
+</body>
+</html>

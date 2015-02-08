@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Affichage d'une carte Geoportail avec Leaflet.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS Leaflet-Géoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="../../style.css" />
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<script type="text/javascript" src="http://leafletjs.com/dist/leaflet.js"></script>
+	
+	<script type="text/javascript" src="../apikey.js"></script>
+	<script type="text/javascript" src="../geoportailconfig.js"></script>
+	<link rel="stylesheet" href="geoportail.css" />
+	<script type="text/javascript" src="geoportail.js"></script>
+</head>
+<body>
+	<h1>Leaflet-Géoportail</h1>
+	<p class="info">
+		Affichage de couches Géoportail avec l'API Leaflet.<br />
+		L'affichage passe par la définition d'une couche Géoportail pour Leaflet : L.TileLayer.Geoportail<br />
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+	</p>
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px;"></div>
+
+	<script type="text/javascript">
+
+		// Liste des couches a afficher
+		var layers = {};
+		var overlays = {};
+		
+		/** Definition des couches  */
+		// Carte IGN 
+		layers['Carte IGN'] = L.tileLayer.geoportail (apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS");
+		// Photo aeriennes
+		layers['Photos A&eacute;riennes'] = L.tileLayer.geoportail (apiKey,"ORTHOIMAGERY.ORTHOPHOTOS");
+		// Scan Express Standard
+		layers['IGN Topo Express'] = L.tileLayer.geoportail (apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD");
+		// Etat major
+		layers['Etat Major'] = L.tileLayer.geoportail(apiKey,"GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40" );
+
+		// Parcellaire
+		overlays['Parcelles'] = L.tileLayer.geoportail (apiKey,"CADASTRALPARCELS.PARCELS", { style:"bdparcellaire_o" });
+		// Routes
+		overlays['Routes'] = L.tileLayer.geoportail (apiKey,"TRANSPORTNETWORKS.ROADS");
+
+		// OpenStreetMap
+		layers['OpenStreetMap']	= L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'});
+
+		// La carte Leaflet
+		var map = L.map("map", {
+			center: new L.LatLng(48.845, 2.424),
+			zoom: 15,
+			layers: [layers['Carte IGN']]
+		});
+		
+		// Ajouter un controle pour le choix des couches
+		L.control.layers(layers,overlays).addTo(map);
+		// Affichage de l'echelle
+		L.control.scale({'position':'bottomleft','metric':true,'imperial':false}).addTo(map);
+		// et une Punaise
+		L.marker([48.84475, 2.4237]).addTo(map).bindPopup("<a href='http://fr.wikipedia.org/wiki/Principe_KISS' style='font-weight:bold;'>KISS !</a><br />C'est facile !").openPopup();
+		
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Affichage KISS d'une carte Geoportail avec Leaflet.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS jQuery-Géoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<!-- Leaflet and Leaflet plugins -->
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<script type="text/javascript" src="http://leafletjs.com/dist/leaflet.js"></script>
+
+	<script type="text/javascript" src="../../geoportailconfig.js"></script>
+	<script type="text/javascript" src="../togeojson.js"></script>
+	<link rel="stylesheet" href="../../leaflet/geoportail.css" />
+	<script type="text/javascript" src="../../leaflet/geoportail.js"></script>
+
+	<!-- jQGeoportail -->
+	<link rel="stylesheet" href="../jqgeoportail.css" />
+	<script type="text/javascript" src="../jqgeoportail.js"></script>
+
+	<link rel="stylesheet" href="../../../style.css" />
+	<style>
+		.geoportalMap
+		{	width:600px; 
+			height:400px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>KISS-Géoportail</h1>
+	<p class="info">
+		Une carte avec des couches en superposition.<br/>
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+	</p>
+
+	<!-- DIV pour la carte -->
+	<div class="geoportalMap" data-apikey="optui97glo4zd4ow3hfxp0ge" data-coord="48.845,2.424,15" >
+		<ul class="geoportalContainer">
+			<!-- Mes couches de base -->
+			<li class="geoportalLayer"data-layer="PHOTO"></li>
+			<li class="geoportalLayer" data-layer="OSM" ></li>
+			<!-- Mes couches en superposition -->
+			<li class="geoportalOverlay" data-layer="PARCELS" ></li>
+			<li class="geoportalOverlay"
+			   data-layer="ROADS"
+			   style="visibility:visible; opacity:0.6"></li>
+		</ul>
+	</div>
+</body>
+</html>

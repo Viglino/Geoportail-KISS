@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Affichage KISS d'une carte Geoportail avec Leaflet.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS jQuery-Géoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<!-- Leaflet and Leaflet plugins -->
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<script type="text/javascript" src="http://leafletjs.com/dist/leaflet.js"></script>
+	
+	<script type="text/javascript" src="../../geoportailconfig.js"></script>	
+	<script type="text/javascript" src="../togeojson.js"></script>
+	<link rel="stylesheet" href="../../leaflet/geoportail.css" />
+	<script type="text/javascript" src="../../leaflet/geoportail.js"></script>
+
+	<!-- jQGeoportail -->
+	<link rel="stylesheet" href="../jqgeoportail.css" />
+	<script type="text/javascript" src="../jqgeoportail.js"></script>
+
+	<link rel="stylesheet" href="../../../style.css" />
+	<style>
+		.geoportalMap
+		{	width:600px; 
+			height:400px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>KISS-Géoportail</h1>
+	<p class="info">
+		Une carte avec un point et un cercle cliquable.<br/>
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+	</p>
+
+	<!-- DIV pour la carte -->
+	<div class="geoportalMap" 
+		data-apikey="optui97glo4zd4ow3hfxp0ge" 
+		data-coord="48.845,2.424,17" 
+		data-layer="PHOTO|MAP|OSM">
+		<ul class="geoportalContainer">
+			<!-- Mes formes -->
+			<li class="geoportalCircle" data-coord="48.84475,2.4237,50" style="color:red;" >
+				Je suis un cercle...
+			</li>
+			<!-- Une punaise -->
+			<li class="geoportalPin"
+			   data-coord="48.84475,2.4237"
+			   data-center="true"
+			   style="background-image:url(punaise.gif); ">
+					<a href='http://fr.wikipedia.org/wiki/Principe_KISS'>
+						  KISS !
+					</a>
+					<br />C'est facile !
+			</li>
+		</ul>
+	</div>
+
+<!-- CODE -->
+<pre style="background:#fff;color:#000; border:1px solid #369; display:inline-block; padding:0.5em 1em;">
+&lt;div class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalMap"</span> 
+    <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>apikey<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"optui97glo4zd4ow3hfxp0ge"</span> 
+    <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>coord<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"48.845,2.424,17"</span> 
+    <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>layer<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"PHOTO|MAP|OSM"</span>>
+    
+    &lt;ul class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalContainer"</span>>
+        &lt;<span style="color:#0100b6;font-weight:700">!</span><span style="color:#0100b6;font-weight:700">-</span><span style="color:#0100b6;font-weight:700">-</span> Mes formes <span style="color:#0100b6;font-weight:700">-</span><span style="color:#0100b6;font-weight:700">-</span>>
+        &lt;li class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalCircle"</span> <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>coord<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"48.84475,2.4237,50"</span> style<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"color:red;"</span> >
+            Je suis un cercle...
+        &lt;<span style="color:#0100b6;font-weight:700">/</span>li>
+        &lt;<span style="color:#0100b6;font-weight:700">!</span><span style="color:#0100b6;font-weight:700">-</span><span style="color:#0100b6;font-weight:700">-</span> Une punaise <span style="color:#0100b6;font-weight:700">-</span><span style="color:#0100b6;font-weight:700">-</span>>
+        &lt;li class<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"geoportalPin"</span>
+           <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>coord<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"48.84475,2.4237"</span>
+           <span style="color:#3c4c72;font-weight:700">data</span><span style="color:#0100b6;font-weight:700">-</span>center<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"true"</span>
+           style<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">"background-image:url(punaise.gif); "</span>>
+                &lt;a href<span style="color:#0100b6;font-weight:700">=</span><span style="color:#d80800">'http://fr.wikipedia.org/wiki/Principe_KISS'</span>>
+                      KISS <span style="color:#0100b6;font-weight:700">!</span>
+                &lt;<span style="color:#0100b6;font-weight:700">/</span>a>
+                &lt;br <span style="color:#0100b6;font-weight:700">/</span>>C<span style="color:#d80800">'est facile !
+        &lt;/li>
+    &lt;/ul>
+&lt;/div>
+</span></pre>
+	
+</body>
+</html>

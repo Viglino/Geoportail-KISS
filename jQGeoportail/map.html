@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2014 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Affichage KISS d'une carte Geoportail avec Leaflet.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS jQuery-Géoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<!-- Leaflet and Leaflet plugins -->
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<script type="text/javascript" src="http://leafletjs.com/dist/leaflet.js"></script>
+	
+	<script type="text/javascript" src="togeojson.js"></script>
+	<script type="text/javascript" src="../geoportailconfig.js"></script>
+	<link rel="stylesheet" href="../leaflet/geoportail.css" />
+	<script type="text/javascript" src="../leaflet/geoportail.js"></script>
+
+	<!-- jQGeoportail -->
+	<link rel="stylesheet" href="jqgeoportail.css" />
+	<script type="text/javascript" src="jqgeoportail.js"></script>
+
+	<link rel="stylesheet" href="../../style.css" />
+	<style>
+		pre
+		{	margin:0; 
+			padding:0.5em;
+			border:1px solid #369;
+			display:inline-block;
+		}
+		p
+		{	margin: 0;
+		}
+		.info
+		{	background-color:#dde;
+			display: inline-block;
+			padding: 0.5em;
+		}
+		.geoportalMap
+		{	width:600px; 
+			height:400px;
+		}
+		.geoportalMap .geoportalLayer,
+		.geoportalMap .geoportalOverlay
+		{	visibility: hidden;
+		}
+		.geoportalMap ul.geoportalContainer
+		{	display:none;
+		}
+		.geoportalMap .geoportalFile
+		{	color:#03f;
+			background-color:#03f;
+			opacity:0.5;
+			width:5px;
+		}
+		.leaflet-popup h1 
+		{	font-size:1em;
+			color: #369;
+			margin: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>KISS-Géoportail</h1>
+	<div class="info">
+		Affichage de couches Géoportail avec l'API Leaflet et un plugin jQuery.<br />
+		L'affichage se fait :
+		<ul>
+			<li>via le plugin jQuery : $("#map").geoportail()</li>
+			<li>ou directement en HTML : <br/>
+<!-- http://markup.su/highlighter/ style Eiffel -->
+<pre style="background:#fff;color:#000;"><span style="color:#1c02ff">&lt;<span style="font-weight:700">div</span> <span style="font-style:italic">id</span>=<span style="color:#d80800">"map"</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalMap"</span> <span style="font-style:italic">data-apikey</span>=<span style="color:#d80800">"MACLE"</span> <span style="font-style:italic">data-coord</span>=<span style="color:#d80800">"48.84475,2.4237,15"</span> <span style="font-style:italic">data-pin</span>=<span style="color:#d80800">"blue"</span>></span>
+    Coucou !
+<span style="color:#1c02ff">&lt;/<span style="font-weight:700">div</span>></span>
+</pre>
+		</ul>
+		<a href="./">Voir le code source</a> sous <a href="http://www.cecill.info/">licence CeCILL</a>
+	</div>
+
+
+	<br style="clear:both;" /><br />
+
+	<!-- DIV pour la carte -->
+	<div id="map" class="geoportalMap" style="float:left;"
+		data-apikey="optui97glo4zd4ow3hfxp0ge" 
+		data-adresse="2 av pasteur, 94160 Saint-Mandé" 
+		data-coord="48.84475,2.4237,15" 
+		data-pin="blue" 
+		data-layer="MAP|PHOTO|OSM" 
+		data-overlay="ROADS">
+		Coucou !
+	</div>
+
+<!-- CODE -->
+<p>Code :</p>
+<pre style="background:#fff;color:#000"><span style="color:#1c02ff">&lt;<span style="font-weight:700">div</span> <span style="font-style:italic">id</span>=<span style="color:#d80800">"map"</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalMap"</span>
+    <span style="font-style:italic">data-apikey</span>=<span style="color:#d80800">"MACLE"</span> 
+    <span style="font-style:italic">data-coord</span>=<span style="color:#d80800">"48.84475,2.4237,15"</span> <span style="font-style:italic">data-pin</span>=<span style="color:#d80800">"blue"</span> 
+    <span style="font-style:italic">data-layer</span>=<span style="color:#d80800">"MAP|PHOTO|OSM"</span> 
+    <span style="font-style:italic">data-overlay</span>=<span style="color:#d80800">"ROADS"</span>></span>
+    Coucou !
+<span style="color:#1c02ff">&lt;/<span style="font-weight:700">div</span>></span>
+</pre>
+<!-- -->
+
+	<br style="clear:both;" /><br />
+
+	<div class="geoportalMap" data-apikey="optui97glo4zd4ow3hfxp0ge" data-zoom="17" data-scale="true" style="float:left;">
+		<!-- Mes Layers -->
+		<ul class="geoportalContainer">
+			<li class="geoportalLayer" data-layer="OSM" ></li>
+			<li class="geoportalLayer" data-layer="PHOTO" style="visibility:visible"></li>
+			<li class="geoportalOverlay" data-layer="PARCELS" ></li>
+			<li class="geoportalOverlay" data-layer="ROADS" style="visibility:visible; opacity:0.6"></li>
+			<!-- Vector Layers -->
+			<li>
+				<!-- GeoJSON Layers -->
+				<a title="Parking" class="geoportalFile" href="data/parking.geojson" style="visibility:visible; color:red; background-color:red; width:3px; "></a>
+				<a title="Rues" class="geoportalFile" href="data/rues.geojson" data-popup="true" ></a>
+				<a title="Vlib" class="geoportalFile" href="data/vlib.geojson" data-popup="true" ></a>
+				<!-- KML Layers -->
+				<a title="KML" class="geoportalFile" href="data/stationnement.kml" data-popup="true" style="color:green"></a>
+				<!-- GPX Layers -->
+				<a title="GPX" class="geoportalFile" href="data/Tour des rochers de Leschaux.gpx" data-popup="true" style="color:magenta"></a>
+			</li>
+		</ul>
+
+		<!-- Mes formes -->
+		<ul class="geoportalContainer">
+			<li class="geoportalCircle" data-coord="48.84475,2.4237,50" >
+				Je suis un cercle...
+			</li>
+			<!-- Mes punaises -->
+			<li class="geoportalPin" data-coord="48.84475,2.4237" >
+				Coucou !
+			</li>
+			<li class="geoportalPin" data-coord="48.8444,2.4249" data-center="true" style="background-image:url(punaise.gif);">
+				<a href='http://fr.wikipedia.org/wiki/Principe_KISS' target="new" style='font-weight:bold;'>KISS !</a>
+				<br />C'est facile !
+			</li>
+			<!-- Mon adresse -->
+			<li class="geoportalAddresse" data-position:"center" style="background-image:url(punaise.gif);">
+				2 av pasteur, 94160 Saint-Mandé
+			</li>
+		</ul>
+	</div>
+
+<!-- CODE -->
+<p>Code :</p>
+<pre style="background:#fff;color:#000"><span style="color:#1c02ff">&lt;<span style="font-weight:700">div</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalMap"</span> <span style="font-style:italic">data-apikey</span>=<span style="color:#d80800">"MACLE"</span> <span style="font-style:italic">data-zoom</span>=<span style="color:#d80800">"17"</span> <span style="font-style:italic">data-scale</span>=<span style="color:#d80800">"true"</span> ></span>
+    <span style="color:#00b418">&lt;!-- Mes Layers --></span>
+    <span style="color:#1c02ff">&lt;<span style="font-weight:700">ul</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalContainer"</span>></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalLayer"</span> <span style="font-style:italic">data-layer</span>=<span style="color:#d80800">"OSM"</span> >&lt;/<span style="font-weight:700">li</span>></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalLayer"</span> <span style="font-style:italic">data-layer</span>=<span style="color:#d80800">"PHOTO"</span> <span style="font-style:italic">style</span>=<span style="color:#d80800">"visibility:visible"</span>>&lt;/<span style="font-weight:700">li</span>></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalOverlay"</span> <span style="font-style:italic">data-layer</span>=<span style="color:#d80800">"PARCELS"</span> >&lt;/<span style="font-weight:700">li</span>></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalOverlay"</span> <span style="font-style:italic">data-layer</span>=<span style="color:#d80800">"ROADS"</span> <span style="font-style:italic">style</span>=<span style="color:#d80800">"visibility:visible; opacity:0.6"</span>>&lt;/<span style="font-weight:700">li</span>></span>
+    <span style="color:#1c02ff">&lt;/<span style="font-weight:700">ul</span>></span>
+    <span style="color:#00b418">&lt;!-- Mes formes --></span>
+    <span style="color:#1c02ff">&lt;<span style="font-weight:700">ul</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalContainer"</span>></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalCircle"</span> <span style="font-style:italic">data-coord</span>=<span style="color:#d80800">"48.84475,2.4237,50"</span> ></span>
+            Je suis un cercle...
+        <span style="color:#1c02ff">&lt;/<span style="font-weight:700">li</span>></span>
+        <span style="color:#00b418">&lt;!-- Mes punaises --></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalPin"</span> <span style="font-style:italic">data-coord</span>=<span style="color:#d80800">"48.84475,2.4237"</span> ></span>
+            Coucou !
+        <span style="color:#1c02ff">&lt;/<span style="font-weight:700">li</span>></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalPin"</span> <span style="font-style:italic">data-coord</span>=<span style="color:#d80800">"48.8444,2.4249"</span> <span style="font-style:italic">data-center</span>=<span style="color:#d80800">"true"</span> <span style="font-style:italic">style</span>=<span style="color:#d80800">"background-image:'punaise.gif';"</span>></span>
+            <span style="color:#1c02ff">&lt;<span style="font-weight:700">a</span> <span style="font-style:italic">href</span>=<span style="color:#d80800">'http://fr.wikipedia.org/wiki/Principe_KISS'</span> <span style="font-style:italic">target</span>=<span style="color:#d80800">"new"</span> <span style="font-style:italic">style</span>=<span style="color:#d80800">'font-weight:bold;'</span>></span>KISS !<span style="color:#1c02ff">&lt;/<span style="font-weight:700">a</span>></span>
+            <span style="color:#1c02ff">&lt;<span style="font-weight:700">br</span> /></span>C'est facile !
+        <span style="color:#1c02ff">&lt;/<span style="font-weight:700">li</span>></span>
+        <span style="color:#00b418">&lt;!-- Mon adresse --></span>
+        <span style="color:#1c02ff">&lt;<span style="font-weight:700">li</span> <span style="font-style:italic">class</span>=<span style="color:#d80800">"geoportalAddresse"</span> <span style="font-style:italic">data-position:</span><span style="color:#d80800">"center"</span> <span style="font-style:italic">style</span>=<span style="color:#d80800">"background-image:'punaise.gif';"</span>></span>
+            2 av pasteur, 94160 Saint-Mandé
+        <span style="color:#1c02ff">&lt;/<span style="font-weight:700">li</span>></span>
+    <span style="color:#1c02ff">&lt;/<span style="font-weight:700">ul</span>></span>
+<span style="color:#1c02ff">&lt;/<span style="font-weight:700">div</span>></span>
+</pre>
+<!-- -->
+
+	<script type="text/javascript">
+
+	</script>
+	
+</body>
+</html>

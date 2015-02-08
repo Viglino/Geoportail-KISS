@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the WTFPL license (http://www.wtfpl.net/txt/copying/).
+	
+	Affichage d'une carte Geoportail avec OpenLayers.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS OpenLayers-Geoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="http://openlayers.org/dev/theme/default/style.css" />
+	<script type="text/javascript" src="http://openlayers.org/dev/OpenLayers.js"></script>
+
+	<script type="text/javascript" src="../apikey.js"></script>
+	
+	<style>
+		.olControlAttribution 
+		{	background-color: rgba(255, 255, 255, 0.5);
+			bottom: 0;
+			padding:0 6px;
+		}
+		.olControlAttribution:hover
+		{	background-color: rgba(255, 255, 255, 0.8);
+		}	
+	</style>
+	
+	<script type="text/javascript">
+	var map;
+	function initMap()
+	{	// Calcul des options du layer WMTS-IGN
+		function geoportailOptions (name, key, layer, options)
+		{	if (!options) options={};
+			var opt = 
+			{	name: name,
+				url: "http://wxs.ign.fr/" + key + "/wmts",
+				layer: layer, // couche disponible sur mon contrat API Géoportail
+				matrixSet: "PM",
+				style: "normal",
+				numZoomLevels: options.maxZoom ? options.maxZoom : 18,
+				group : "IGN",
+				attribution: '&copy; <a href="http://www.ign.fr/">IGN-France</a>'
+			};
+			return opt;
+		}
+		
+		// Nouvelle carte
+		map = new OpenLayers.Map("map", { projection:"EPSG:3857" });
+		// Ajouter un controle pour les couches
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		 
+		// Liste des couches a afficher
+		var layers = new Array();
+		
+		// Carte IGN 
+		layers.push ( new OpenLayers.Layer.WMTS(geoportailOptions("Cartes IGN", apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS", { maxZoom:19 })) );
+		// Photo aeriennes
+		layers.push ( new OpenLayers.Layer.WMTS(geoportailOptions("Photos A&eacute;riennes", apiKey, "ORTHOIMAGERY.ORTHOPHOTOS", { maxZoom:20 })) );
+		// Scan Express Standard
+		layers.push ( new OpenLayers.Layer.WMTS(geoportailOptions("IGN Topo Express", apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD", { maxZoom:18 })) );
+		// Etat major
+		layers.push ( new OpenLayers.Layer.WMTS(geoportailOptions("Etat Major", apiKey, "GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40", { maxZoom:15 })) );
+		
+		// OSM
+		layers.push ( new OpenLayers.Layer.OSM() );
+		
+		// Ajouter les couches
+		map.addLayers(layers);
+		
+		// Centrer la carte
+		var WGS84 = new OpenLayers.Projection('EPSG:4326');
+		map.setCenter(new OpenLayers.LonLat(2.424, 48.845).transform(WGS84, map.getProjectionObject()), 15);
+	}
+	</script>
+</head>
+<body onload="initMap()">
+
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px;"></div>
+	
+</body>
+</html>

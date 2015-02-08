@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the WTFPL license (http://www.wtfpl.net/txt/copying/).
+	
+	GetCapabilities Geoportail => JSON
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>GetCapabilities Géoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+function getcapabilities(key)
+{	if (!key) key = $("#key").val();
+	$("#json").val("\n  CHARGEMENT...");
+	$("body").css("opacity",0.3)
+	$.ajax("http://wxs.ign.fr/"+key+"/wmts?service=WMTS&request=GetCapabilities&output=json",
+	{	dataType:"jsonp",
+		success:function(resp, status)
+		{	var xml = $.parseXML(resp.xml.replace(/ows:/g,""));
+			var js = {};
+			var layers = $(xml).find("Layer");
+			for (var i=0; i<layers.length; i++)
+			{	var l = $(layers[i]);
+				var up = l.find("UpperCorner").text().split(" ");
+				var lo = l.find("LowerCorner").text().split(" ");
+				// Recherche des matrix
+				tm = $(l).find("TileMatrix");
+				var minZoom = 20;
+				var maxZoom = 0;
+				for (var j=0; j<tm.length; j++)
+				{	var t = Number($(tm[j]).text());
+					if (minZoom > t) minZoom = t;
+					if (maxZoom < t) maxZoom = t;
+				}
+				// Style
+				var style = l.children("Style[isDefault='true']").children("Identifier").text();
+				// Remplir
+				var id = l.children("Identifier").text();
+				js[id] =
+				{	title: l.children("Title").text(),
+					format: l.children("Format").text(),
+					tilematrix: l.find("TileMatrixSet").text(),
+					style: style?style:"normal",
+					minZoom: minZoom,
+					maxZoom: maxZoom,
+					bbox : [Number(lo[0]),Number(lo[1]),Number(up[0]),Number(up[1])]
+				};
+				if ($("#desc").is(':checked')) 
+				{	js[id].desc = l.children("Abstract").text();
+					js[id].keys = l.children("Keywords").text();
+				}
+			
+			}
+			if ($("#mef").is(':checked')) js = "\n"+JSON.stringify(js).replace(/},/g,"},\n");
+			else js = JSON.stringify(js);
+			js = "geoportailConfig.capabilities['"+(key?key:'default')+"']="+js;
+			$("#json").val(js);
+			$("body").css("opacity",1)
+		},
+		error:function()
+		{	$("body").css("opacity",1);
+			$("#json").val("");
+			alert ("Zut raté !");
+		}
+	});
+}
+</script>
+
+</head>
+<body>
+	<h2 style="color:#369">Geoportail GetCapabilities JSON</h2>
+	<div style="border:1px solid #369; font-style:italic; margin:1em 0; padding:0.5em;">
+		Outil de calcul des capabilities des couches WMTS de l'API Géoportail au format JS pour inclusion directe dans un script.
+	</div>
+	Clé Géoportail : <input id="key" type="text" val="" style="width:20em" />
+	<br />
+	<textarea id='json' style="width:100%; height:15em;"></textarea>
+	<br />
+	<input id='mef' type="checkbox" /><label for="mef"> Mise en forme </label>
+	<input id='desc' type="checkbox" /><label for="desc"> Inclure la description </label>
+	<input type="button" onclick="getcapabilities()" value='Charger...' style="margin:0 1em"/>
+</body>
+</html>

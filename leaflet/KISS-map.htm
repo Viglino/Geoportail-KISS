@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the Beerware license (http://fr.wikipedia.org/wiki/Beerware).
+	
+	Affichage d'une carte Geoportail avec Leaflet.js
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>KISS Leaflet-Geoportail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="http://leafletjs.com/dist/leaflet.css" />
+	<script type="text/javascript" src="http://leafletjs.com/dist/leaflet.js"></script>
+</head>
+<body>
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px;"></div>
+
+	<script type="text/javascript">
+
+		// Cle API Geoportail
+		var apiKey = "udebidbrswqq3fj5xhv3s2v6"; // optui97glo4zd4ow3hfxp0ge udebidbrswqq3fj5xhv3s2v6
+
+		// Liste des couches a afficher
+		var layers = new Array();
+		
+		// L'url des services Geoportail
+		function geopUrl (key, layer, format)
+		{	return "http://wxs.ign.fr/"+ key + "/wmts?LAYER=" + layer
+				+"&EXCEPTIONS=text/xml&FORMAT="+(format?format:"image/jpeg")+"&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM"
+				+"&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}" ;
+		}
+		var attributionIGN = '&copy; <a href="http://www.ign.fr/">IGN-France</a>';
+		
+		/** Definition des couches  */
+		// Carte IGN 
+		layers['Carte IGN'] = L.tileLayer(geopUrl(apiKey,"GEOGRAPHICALGRIDSYSTEMS.MAPS"), { attribution:attributionIGN, maxZoom:18 } );
+		// Photo aeriennes
+		layers['Photos A&eacute;riennes'] = L.tileLayer(geopUrl(apiKey,"ORTHOIMAGERY.ORTHOPHOTOS"), { attribution:attributionIGN, maxZoom:18 } );
+		// Scan Express Standard
+		layers['IGN Topo Express'] = L.tileLayer(geopUrl(apiKey,"GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD"), { attribution:attributionIGN, maxZoom:18 } );
+		// Etat major
+		layers['Etat Major'] = L.tileLayer(geopUrl(apiKey,"GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40"), { attribution:attributionIGN, maxZoom:15 } );
+
+		// OpenStreetMap
+		layers['OpenStreetMap']	= L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'});
+
+		// La carte Leaflet
+		var map = L.map("map", {
+			center: new L.LatLng(48.845, 2.424),
+			zoom: 15
+		});
+		
+		// Ajouter un controle pour le choix des couches
+		L.control.layers(layers).addTo(map);
+		// et une Punaise
+		L.marker([48.84475, 2.4237]).addTo(map).bindPopup("<a href='http://fr.wikipedia.org/wiki/Principe_KISS' style='font-weight:bold;'>KISS !</a><br />I am a popup.").openPopup();
+		
+	</script>
+	
+</body>
+</html>
