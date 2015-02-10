@@ -14,9 +14,11 @@
 
     <link rel="stylesheet" href="../style.css" />
 
-    <link rel="stylesheet" href="http://ol3js.org/en/master/css/ol.css" />
-	<script type="text/javascript" src="http://ol3js.org/en/master/build/ol.js"></script>
+    <link rel="stylesheet" href="http://openlayers.org/en/master/css/ol.css" />
+	<script type="text/javascript" src="http://openlayers.org/en/master/build/ol.js"></script>
+	<!-- http://openlayers.org/en/v3.2.0/build/ol.js -->
 
+	<script type="text/javascript" src="geoportail.js"></script>
 	<script type="text/javascript" src="../apikey.js"></script>
 	
 	<style>
@@ -121,7 +123,7 @@
 				break;
 		}
 	};
-	/** Control Nord */
+	/** Control Nord * /
 	ControlNord = function(opt_options) 
 	{	var options = opt_options || {};
 
@@ -150,82 +152,52 @@
 	};
 	ol.inherits(ControlNord, ol.control.Control);
 	
-	/**
-	* @constructor IGN's Geoportail WMTS layer definition
-	* @extends {ol.source.WMTS}
-	* @param {String=} key API key.
-	* @param {String=} layer Layer name.
-	* @param {olx.source.OSMOptions=} options WMTS options.
-	* @todo 
-	*/
-	ol.source.Geoportail = function(key, layer, options)
-	{	if (!options) options={};
-		var matrixIds = new Array();
-		var resolutions = new Array();//[156543.03392804103,78271.5169640205,39135.75848201024,19567.879241005125,9783.939620502562,4891.969810251281,2445.9849051256406,1222.9924525628203,611.4962262814101,305.74811314070485,152.87405657035254,76.43702828517625,38.218514142588134,19.109257071294063,9.554628535647034,4.777314267823517,2.3886571339117584,1.1943285669558792,0.5971642834779396,0.29858214173896974,0.14929107086948493,0.07464553543474241];
-		var size = ol.extent.getWidth(ol.proj.get('EPSG:3857').getExtent()) / 256;
-		for (var z=0; z <= (options.maxZoom ? options.maxZoom:18) ; z++) 
-		{	matrixIds[z] = z ; 
-			resolutions[z] = size / Math.pow(2, z)
-		}
-		var attr = [ ol.source.Geoportail.prototype.attribution ];
-		if (options.attributions) attr.push(options.attributions);
-		ol.source.WMTS.call (this, 
-			{	url: "http://wxs.ign.fr/" + key + "/wmts",
-				layer: layer,
-				matrixSet: "PM",
-				format: options.format ? options.format:"image/jpeg",
-				projection: "EPSG:3857",
-				tileGrid: new ol.tilegrid.WMTS
-				({	origin: [-20037508, 20037508],
-					resolutions: resolutions,
-					matrixIds: matrixIds
-				}),
-				style: options.style ? options.style:"normal",
-				attributions: attr
-			});	
-	};
-	ol.inherits (ol.source.Geoportail, ol.source.WMTS);
-	// Attribution standard
-	ol.source.Geoportail.prototype.attribution = new ol.Attribution
-			({	html: '<a href="http://www.geoportail.gouv.fr/">Géoportail</a> &copy; <a href="http://www.ign.fr/">IGN-France</a>'
-			});
+	
 	/** */
 	
 	// OSM
-	var osm = new ol.layer.Tile({ source: new ol.source.OSM() });
-	osm.setVisible(false);
+	var osm = new ol.layer.Tile(
+		{	source: new ol.source.OSM(),
+			visible: false
+		});
 	// Carte IGN
 	var carte = new ol.layer.Tile(
 		{	source: new ol.source.Geoportail(apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS")
 		});
 	// Photo IGN
 	var ortho = new ol.layer.Tile(
-		{	source: new ol.source.Geoportail(apiKey, "ORTHOIMAGERY.ORTHOPHOTOS", {maxZoom:19})
+		{	source: new ol.source.Geoportail(apiKey, "ORTHOIMAGERY.ORTHOPHOTOS", {maxZoom:19}),
+			visible:false
 		});
-	ortho.setVisible(false);
+	var routes = new ol.layer.Tile(
+		{	title: "Routes",
+			source: new ol.source.Geoportail(apiKey, "TRANSPORTNETWORKS.ROADS", { layer:"TRANSPORTNETWORKS.ROADS", key: apiKey, "minZoom":6,"maxZoom":18, format:"image/png" }),
+			visible:true
+		});
 	
 	// Les couches
-	var layers = [ortho,osm,carte];
+	var layers = [ortho,osm,carte,routes];
 	
 	
 	// La carte
 	var map = new ol.Map
 		({	target: 'map',
-			renderer: ["canvas"],  /* ["webgl", "canvas", "dom"] */
+			//renderer: ["canvas", "webgl", "dom"],  /* ["webgl", "canvas", "dom"] */
 			view: new ol.View
 			({	zoom: 7,
 				center: [288074, 6247982]
 			}),
 			controls: ol.control.defaults().extend
-			([	new ol.control.FullScreen(),
-				new ol.control.ScaleLine(),
-				new ControlNord()
+			([	// new ol.control.FullScreen(),
+				// new ControlNord(),
+				new ol.control.ScaleLine()
 			]),
 			interactions: ol.interaction.defaults().extend
 			([	// new ol.interaction.DragRotateAndZoom()
 			]),
 			layers: layers
 		});
+	
 		
 	</script>
 	

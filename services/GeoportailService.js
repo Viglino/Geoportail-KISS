@@ -150,7 +150,7 @@ var GeoportailService = function (apiKey, proxy)
 		// ??? xls = '<?xml version="1.0" encoding="UTF-8"?><xls:XLS xmlns:xls="http://www.opengis.net/xls" version="1.2"><xls:RequestHeader sessionID=""/><xls:Request methodName="GeocodeRequest" version="1.2" requestID=""><xls:GeocodeRequest><xls:Address countryCode="StreetAddress"><xls:freeFormAddress>152 rue claude nicolas ledoux, 30900 NÎMES</xls:freeFormAddress></xls:Address></xls:GeocodeRequest></xls:Request></xls:XLS>';
 
 		$.ajax({
-			url: "http://wxs.ign.fr/"+apiKey+"/geoportail/ols",
+			url: geoportailConfig.url+apiKey+"/geoportail/ols",
 			dataType: "jsonp",
 			data: { output: 'json', xls: xls },
 			success: function( resp )
@@ -241,7 +241,7 @@ var GeoportailService = function (apiKey, proxy)
 		xls = this.xlsRequest(xls);
 			
 		$.ajax({
-			url: "http://wxs.ign.fr/"+apiKey+"/geoportail/ols",
+			url: geoportailConfig.url+apiKey+"/geoportail/ols",
 			dataType: "jsonp",
 			data: { output: 'json', xls: xls },
 			success: function( resp )
@@ -293,7 +293,7 @@ var GeoportailService = function (apiKey, proxy)
 		if (options.adresse) type = 'StreetAddress';
 		if (options.poi) type = (type?type+',':'')+'PositionOfInterest';
 		$.ajax(
-		{	url : "http://wxs.ign.fr/"+apiKey+"/ols/apis/completion",
+		{	url : geoportailConfig.url+apiKey+"/ols/apis/completion",
 			dataType : "jsonp",
 			data : 
 			{	text : txt,
@@ -339,7 +339,7 @@ var GeoportailService = function (apiKey, proxy)
 			lat = [lat];
 		}
 		$.ajax(
-			{	url : "http://wxs.ign.fr/"+apiKey+"/alti/rest/elevation.xml",
+			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevation.xml",
 				dataType : "jsonp",
 				data : 
 				{	lon: lontxt,
@@ -404,7 +404,7 @@ var GeoportailService = function (apiKey, proxy)
 			lat = [lat];
 		}
 		$.ajax(
-			{	url : "http://wxs.ign.fr/"+apiKey+"/alti/rest/elevationLine.xml",
+			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevationLine.xml",
 				dataType : "jsonp",
 				data : 
 				{	lon: lontxt,
@@ -438,6 +438,7 @@ var GeoportailService = function (apiKey, proxy)
 				}
 			});
 	};
+	
 	// Calcul JSON via proxy (bug en JSONP)
 	this.altimetry0 = function(lon,lat, callback)
 	{	if (!proxy) { condole.log ("[ALTIMETRY] Error : no proxy found"); return; }
@@ -448,7 +449,7 @@ var GeoportailService = function (apiKey, proxy)
 		$.ajax(
 			{	url: proxy,
 				data : 
-				{	url : "http://wxs.ign.fr/"+apiKey+"/alti/rest/elevation.json",
+				{	url : geoportailConfig.url+apiKey+"/alti/rest/elevation.json",
 					lon: lon,
 					lat: lat,
 					indent: false
