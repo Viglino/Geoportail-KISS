@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!----------------------------------------------------------
+ 
+	Copyright (c) 2013 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	Utilisation des services Geoportail
+	
+------------------------------------------------------------>
+<html>
+<head>
+	<title>Geoportail - WMSCapabilities</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<link rel="stylesheet" href="../style.css" />
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<link rel="stylesheet" href="http://dev.openlayers.org/theme/default/style.css" />
+	<script type="text/javascript" src="http://dev.openlayers.org/OpenLayers.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+	<script type="text/javascript" src="../apikey.js"></script>
+	<script type="text/javascript" src="../geoportailconfig.js"></script>
+	<link rel="stylesheet" href="../openlayers/geoportail.css" />
+	<script type="text/javascript" src="../openlayers/geoportail.js"></script>
+
+	<script type="text/javascript" src="GeoportailCapabilities.js"></script>
+
+	<style>
+		#capabilities 
+		{	display: inline-block;
+			margin: 0.5em;
+			padding: 3px;
+			width:50%;
+		}
+		#capabilities select
+		{	min-width:20em;
+		}
+		#capabilities div
+		{	min-width:20em;
+			height:5em;
+			display:block;
+			padding:0.5em;
+		}
+		#capabilities h1,
+		#capabilities p
+		{	font-size:1em;
+			margin:0;
+		}
+		
+	</style>
+	
+	<script type="text/javascript">
+	var map; 
+	function initMap()
+	{	// Nouvelle carte
+		map = new OpenLayers.Map.Geoportail(apiKey, "map" );
+		map.addGeoportailLayers (["ORTHOIMAGERY.ORTHOPHOTOS","GEOGRAPHICALGRIDSYSTEMS.MAPS"])
+		
+		// Ajouter un controle pour les couches
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		map.setCenterAtLonlat([2.424, 48.845], 12);
+		
+		$("#find").click(function()
+		{	$("#capabilities").wmsCapabilities($("#service").val(), 
+					{ 	proxy:"proxy.php", 
+						selectSize:6,
+						/*
+						onChange: function(l)
+						{	map.addLayer(l);
+						},
+						*/
+						onSelect: function(l)
+						{	map.addLayer(l);
+						}
+					});
+			$("#capabilities button").text("Ajouter");
+		});
+	}
+	
+	</script>
+</head>
+<body onload="initMap()" style="color:#036">
+
+	<h1>Géoportail - Service altimétrique</h1>
+	<p class="info" style="display:table; min-width:500px;">
+		Recherche de couches WMS sur un serveur.
+	</p>
+
+	<!-- DIV pour la carte -->
+	<div id="map" style="width:600px; height:400px; float:left;"></div>
+
+	<!-- Serveur -->
+	<div style="display:inline-block; margin:0.5em;">
+		<input id="service" type="text" value="http://geoservices.brgm.fr/geologie" style="width:20em;" />
+		<button id="find">Chercher...</button>
+	</div>
+	<div id="capabilities"></div>
+</body>
+</html>

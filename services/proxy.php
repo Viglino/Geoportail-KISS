@@ -4,7 +4,10 @@ $params = array();
 foreach ($_GET as $k => $v)
 {	if ($k != 'url') array_push ($params, urlencode($k).'='.urlencode($v));
 }
-$url .= '?' . implode('&',$params);
+if (preg_match("/\?/", $url)) $url .= '&';
+else $url .= '?';
+$url .= implode('&',$params);
+
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
