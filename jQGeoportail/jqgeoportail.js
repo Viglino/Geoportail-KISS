@@ -14,7 +14,25 @@
 
 	
  */
+
+ /** Test a selector on a map ??
 (function ( $ ) {
+{
+	var original  = jQuery.fn.init;
+	jQuery.fn.init = function (selector,context)
+	{	if (/:map/.test(selector))
+		{	var s = selector.replace(":map","");
+			var rep = new original(s,context);
+			if (rep.data("map")) return rep.data("map");
+			else rep;
+		}
+		return new original(selector,context); 
+	};
+})();
+*/
+
+(function ( $ ) {
+
 
 /** Create a new map in the container */
 jQuery.fn.geoportail = function() 
