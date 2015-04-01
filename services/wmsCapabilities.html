@@ -54,7 +54,7 @@
 	var map; 
 	function initMap()
 	{	// Nouvelle carte
-		map = new OpenLayers.Map.Geoportail(apiKey, "map" );
+		map = new OpenLayers.Map.Geoportail(apiKey, "map" , { projection:"EPSG:3857" } );
 		map.addGeoportailLayers (["ORTHOIMAGERY.ORTHOPHOTOS","GEOGRAPHICALGRIDSYSTEMS.MAPS"])
 		
 		// Ajouter un controle pour les couches
@@ -91,6 +91,13 @@
 	<div id="map" style="width:600px; height:400px; float:left;"></div>
 
 	<!-- Serveur -->
+	<div style="display:inline-block; margin:0.5em; clear:right;">
+		Services : 
+		<button onclick="$('#service').val('http://geoservices.brgm.fr/geologie')">BRGM</button>
+		<button onclick="$('#service').val('http://services.sandre.eaufrance.fr/geo/eth_FXX')">Sandre</button>
+		<button onclick="$('#service').val('http://webservices.nationalatlas.gov/wms')">National Atlas (US)</button>
+	</div>
+	<br />
 	<div style="display:inline-block; margin:0.5em;">
 		<input id="service" type="text" value="http://geoservices.brgm.fr/geologie" style="width:20em;" />
 		<button id="find">Chercher...</button>
