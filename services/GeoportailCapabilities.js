@@ -16,9 +16,21 @@ WMSCapabilities.prototype.getLayerFromCap = function(layer, options)
 			maxScale: layer.maxScale,
 			attribution: layer.attribution
 		}, options);
+	var format = false;
+	// Look for prefered format first
+	var pref =[/png/,/jpeg/,/gif/];
+	for (var i=0; i<3; i++)
+	{	for (var f=0; f<layer.formats.length; f++)
+		{	if (pref[i].test(layer.formats[f]))
+			{	format=layer.formats[f];
+				break;
+			}
+		}
+		if (format) break;
+	}
 	var l = new OpenLayers.Layer.WMS( options.title || layer.title, layer.url, 
 				{	layers: layer.name,
-					format: layer.formats[0],
+					format: format || layer.formats[0],
 					transparent: true
 				},options);
 	return l;

@@ -54,12 +54,49 @@
 	var map; 
 	function initMap()
 	{	// Nouvelle carte
-		map = new OpenLayers.Map.Geoportail(apiKey, "map" , { projection:"EPSG:3857" } );
+		map = new OpenLayers.Map.Geoportail(apiKey, "map" , { projection:"EPSG:3857", displayProjection:"EPSG:4326" } );
 		map.addGeoportailLayers (["ORTHOIMAGERY.ORTHOPHOTOS","GEOGRAPHICALGRIDSYSTEMS.MAPS"])
 		
 		// Ajouter un controle pour les couches
 		map.addControl(new OpenLayers.Control.LayerSwitcher());
 		map.setCenterAtLonlat([2.424, 48.845], 12);
+		
+		/* Reproject Layer 4326 to 3857	(reduce tileSize to minimize deformations on small scales) * /
+		function get_wms_url(bounds0) 
+		{	// recalculate bounds from Google to WGS
+			var proj = new OpenLayers.Projection("EPSG:4326");
+			var bounds = bounds0.clone();
+			bounds.transform(map.getProjectionObject(), proj);
+
+            //construct WMS request
+			var url = this.url;
+				url += "?REQUEST=GetMap";
+				url += "&SERVICE=WMS";
+				url += "&VERSION=1.1.1";
+				url += "&LAYERS=" + this.layers;
+				url += "&FORMAT=" + this.format;
+				url += "&TRANSPARENT=TRUE";
+				url += "&SRS=" + "EPSG:4326";
+				url += "&BBOX=" + bounds.toBBOX();
+				url += "&WIDTH=" + this.tileSize.w;
+				url += "&HEIGHT=" + this.tileSize.h;
+            return url;
+
+        }
+		var l = new OpenLayers.Layer.TMS("GEBCO", 
+			"http://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv",
+			{	 layers: "GEBCO_LATEST",
+				 type: 'jpeg',
+				 visibility: true,
+				 getURL: get_wms_url,
+				 // tileSize:new OpenLayers.Size(128,128),
+				 format: "image/jpeg",
+				 opacity: 1,
+				 isBaseLayer: false
+			});
+		map.addLayer(l);
+		/**/
+			
 		
 		$("#find").click(function()
 		{	$("#capabilities").wmsCapabilities($("#service").val(), 
@@ -95,6 +132,8 @@
 		Services : 
 		<button onclick="$('#service').val('http://geoservices.brgm.fr/geologie')">BRGM</button>
 		<button onclick="$('#service').val('http://services.sandre.eaufrance.fr/geo/eth_FXX')">Sandre</button>
+		<button onclick="$('#service').val('http://tds0.ifremer.fr/thredds/wms/CORIOLIS-GLOBAL-NRTOA-OBS_TIME_SERIE')">IFREMER</button>
+		<button onclick="$('#service').val('http://maps.ngdc.noaa.gov/soap/etopo1/MapServer/WMSServer')">Noaa</button>
 		<button onclick="$('#service').val('http://webservices.nationalatlas.gov/wms')">National Atlas (US)</button>
 	</div>
 	<br />
