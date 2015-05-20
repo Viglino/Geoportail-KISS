@@ -149,6 +149,7 @@ OpenLayers.Layer.Geoportail = OpenLayers.Class(OpenLayers.Layer.WMTS,
 	{	if (!options) options={};
 		// Get apiKey capabilities or defaults
 		this.capabilities = geoportailConfig.capabilities[options.key] || geoportailConfig.capabilities["default"];
+		this.gppKey = options.key;
 		// Default options
 		var opt = 
 		{	url: geoportailConfig.url + options.key + "/wmts",

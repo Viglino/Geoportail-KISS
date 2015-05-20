@@ -98,7 +98,7 @@ jQuery.fn.wmsCapabilities = function(url, options)
 		var select = $("<select>").appendTo(self);
 		if (options.selectSize) select.attr("size", options.selectSize);
 		var btn;
-		if (options.onSelect) btn = $("<button>").text("Select").appendTo(self);
+		if (options.onSelect) btn = $("<button>").text(options.selectText || "Select").appendTo(self);
 		var info = $("<div>").appendTo(self);
 		select.on ("change", function()
 			{	var n = $("option:selected", this).val();
