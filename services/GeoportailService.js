@@ -34,6 +34,22 @@ var GeoportailService = function (apiKey, proxy)
 			},
 			bbox: a.find("Place[type=Bbox]").text().split(';')
 		}
+
+		// Parcelle
+		if (a.find("Address").attr("countryCode")==	"CadastralParcel")
+		{	r.parcelle = 
+			{	id: a.find("Street").text(),
+				numero: a.find("Place[type=Numero]").text(),
+				feuille: a.find("Place[type=Feuille]").text(),
+				section: a.find("Place[type=Section]").text(),
+				departement: a.find("Place[type=Departement]").text(),
+				commune: a.find("Place[type=Commune]").text(),
+				communeAbsorbee: a.find("Place[type=CommuneAbsorbee]").text(),
+				arrondissement: a.find("Place[type=Arrondissement]").text(),
+				insee: a.find("Place[type=INSEE]").text()
+			}
+		}
+
 		var t = a.find("GeocodeMatchCode");
 		if (t.length)
 		{	r.match=
@@ -42,7 +58,7 @@ var GeoportailService = function (apiKey, proxy)
 			};
 		}
 		t = a.find("ExtendedGeocodeMatchCode");
-		if (t.length)
+		//if (t.length)
 		{	r.match =
 			{	type: t.text(),
 				distance: Number(a.find("SearchCentreDistance").attr("value"))
@@ -54,6 +70,7 @@ var GeoportailService = function (apiKey, proxy)
 			rue: sa.find("Street").text(),
 			cpost: a.find ("PostalCode").text()
 		};
+		// Position
 		var p = $(a).find("pos").text().split(' ');
 		r.lon = Number(p[1]);
 		r.lat = Number(p[0]);
@@ -225,9 +242,11 @@ var GeoportailService = function (apiKey, proxy)
 		// Type de recherche (adresse ou poi)
 		var a=''
 		if (options.adresse) a += '<ReverseGeocodePreference>StreetAddress</ReverseGeocodePreference>';
-		if (options.poi) a += '<ReverseGeocodePreference>StreetAddress</ReverseGeocodePreference>';
+		if (options.poi) a += '<ReverseGeocodePreference>PositionOfInterest</ReverseGeocodePreference>';
+		if (options.parcelle) a = '<ReverseGeocodePreference>CadastralParcel</ReverseGeocodePreference>';
 		if (!a) a = '<ReverseGeocodePreference>StreetAddress</ReverseGeocodePreference>';
 		xls = xls.replace('ADRESSE',a);
+
 		// Recherche dans un rayon
 		a = '';
 		if (options.dist)
