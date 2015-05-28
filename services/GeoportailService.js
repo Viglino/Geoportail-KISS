@@ -50,19 +50,15 @@ var GeoportailService = function (apiKey, proxy)
 			}
 		}
 
+		r.match = { distance: Number(a.find("SearchCentreDistance").attr("value")) };
 		var t = a.find("GeocodeMatchCode");
 		if (t.length)
-		{	r.match=
-			{	type: t.attr('matchType'),
-				accuracy: t.attr('accuracy')
-			};
+		{	r.match['type'] = t.attr('matchType');
+			r.match.accuracy = t.attr('accuracy');
 		}
 		t = a.find("ExtendedGeocodeMatchCode");
-		//if (t.length)
-		{	r.match =
-			{	type: t.text(),
-				distance: Number(a.find("SearchCentreDistance").attr("value"))
-			};
+		if (t.length)
+		{	r.match['type'] =  t.text();
 		}
 		var sa = a.find("StreetAddress");
 		r.adresse =
