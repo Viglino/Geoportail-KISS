@@ -29,6 +29,7 @@ var GeoportailService = function (apiKey, proxy)
 				departement: a.find("Place[type=Departement]").text(),
 				insee: a.find("Place[type=INSEE]").text(),
 				nature: a.find("Place[type=Nature]").text(),
+				importance: a.find("Place[type=Importance]").text(),
 				territoire: a.find("Place[type=Territoire]").text(),
 				id_adresse: a.find("Place[type=ID]").text()
 			},
