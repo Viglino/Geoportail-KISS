@@ -1,3 +1,46 @@
+/** 
+	WMS Layer with EPSG:4326 projection.
+	The tiles will be reprojected to map pojection (EPSG:3857).
+	NB: reduce tileSize to minimize deformations on small scales.
+*/
+(function(){
+var proj = new OpenLayers.Projection("EPSG:4326");
+
+OpenLayers.Layer.WMS4326 = OpenLayers.Class(OpenLayers.Layer.WMS, 
+{
+	initialize: function(name, url, params, options) {
+		options.singleTile = false;
+		OpenLayers.Layer.WMS.prototype.initialize.apply(this, arguments);
+	},
+
+	getURL: function (bounds) 
+	{	// recalculate bounds from map projection to WGS84
+		bounds = bounds.clone().transform(this.map.projection, proj);
+
+		var imageSize = this.getImageSize();
+		// WMS 1.3 introduced axis order
+		var reverseAxisOrder = this.reverseAxisOrder();
+		var bbox = this.encodeBBOX ?
+			bounds.toBBOX(null, reverseAxisOrder) :
+			bounds.toArray(reverseAxisOrder);
+
+        // construct WMS request
+		var url = this.url;
+			url += "?REQUEST=GetMap";
+			url += "&SERVICE=WMS";
+			url += "&VERSION=" + this.params.VERSION;
+			url += "&LAYERS=" + this.params.LAYERS;
+			url += "&FORMAT=" + this.params.FORMAT;
+			url += "&TRANSPARENT=" + (this.params.TRANSPARENT ? "TRUE" : "FALSE");
+			url += (parseFloat(this.params.VERSION) >= 1.3 ? "&CRS=" + "EPSG:4326" : "&SRS=" + "EPSG:4326");
+			url += "&BBOX=" + bbox;
+			url += "&WIDTH=" + imageSize.w;
+			url += "&HEIGHT=" + imageSize.h;
+        return url;
+    }
+});
+})();
+
 /** WMSCapabilities
 */
 var WMSCapabilities = function (proxy)
@@ -7,6 +50,7 @@ var WMSCapabilities = function (proxy)
 		};
 	}
 };
+
 
 WMSCapabilities.prototype.getLayerFromCap = function(layer, options)
 {	if (!options) options={};
@@ -28,12 +72,31 @@ WMSCapabilities.prototype.getLayerFromCap = function(layer, options)
 		}
 		if (format) break;
 	}
-	var l = new OpenLayers.Layer.WMS( options.title || layer.title, layer.url, 
-				{	layers: layer.name,
-					format: format || layer.formats[0],
-					transparent: true
-				},options);
-	return l;
+	if (!format) format = layer.formats[0];
+
+	// Check srs
+	var wms, srs = options.srs;
+	delete (options.srs);
+	if (srs && !layer.srs[srs])
+	{	if (!layer.srs["EPSG:4326"]) return false;
+		wms = "WMS4326";
+	}
+	else wms = "WMS";
+
+	// Trace
+	if (WMSCapabilities.prototype.trace)
+	{	console.log ("OpenLayers.Layer."+wms+" (\"" +(options.title || layer.title)+ "\", \""+ layer.url +"\", "
+		+ JSON.stringify ({	layers: layer.name,
+				format: format,
+				transparent: true
+			}) +", "
+		+ JSON.stringify(options)) +")";
+	}
+	return new OpenLayers.Layer[wms] ( options.title || layer.title, layer.url, 
+		{	layers: layer.name,
+			format: format,
+			transparent: true
+		}, options);
 };
 
 
@@ -97,12 +160,20 @@ jQuery.fn.wmsCapabilities = function(url, options)
 		}
 		var select = $("<select>").appendTo(self);
 		if (options.selectSize) select.attr("size", options.selectSize);
-		var btn;
+		var btn, proj;
 		if (options.onSelect) btn = $("<button>").text(options.selectText || "Select").appendTo(self);
+		if (options.srs) 
+		{	proj = $("<input type='checkbox'>");
+			$("<label>").text(options.reprojectText || "Reproject").appendTo(self).append(proj);
+		}
 		var info = $("<div>").appendTo(self);
 		select.on ("change", function()
 			{	var n = $("option:selected", this).val();
 				var l = layers[n];
+				if (options.srs)
+				{	if (!l.srs[options.srs]) proj.prop("checked","checked");
+					else proj.prop("checked","");
+				}
 				info.html("");
 				$("<h1>").text(l['title']).appendTo(info);
 				$("<p>").text(l['abstract'] || "").appendTo(info);
@@ -111,13 +182,13 @@ jQuery.fn.wmsCapabilities = function(url, options)
 					{	$("<img>").attr("src",l.styles[i].legend.href).appendTo(info);
 					}
 				}
-				if (options.onChange) options.onChange(cap.getLayerFromCap(l));
+				if (options.onChange) options.onChange(cap.getLayerFromCap(l,{srs:options.srs}));
 			});
 		if (options.onSelect) btn.click(function()
 			{	var n = $("option:selected", select).val();
 				if (typeof n == "undefined") return;
 				info.html("");
-				options.onSelect(cap.getLayerFromCap(layers[n]));
+				options.onSelect(cap.getLayerFromCap(layers[n],{ srs:(proj.prop("checked")?options.srs:false) }));
 			})
 		for (var i=0; i<layers.length; i++) 
 		{	$("<option>").text(layers[i].name)

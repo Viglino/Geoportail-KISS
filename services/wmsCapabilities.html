@@ -47,7 +47,15 @@
 		{	font-size:1em;
 			margin:0;
 		}
-		
+		#capabilities label
+		{	display:block;
+			color:#333;
+			font-size:0.9em;
+		}
+		#capabilities label input
+		{	float:left;
+			margin-right:0.5em;
+		}
 	</style>
 	
 	<script type="text/javascript">
@@ -103,6 +111,7 @@
 					{ 	proxy:"proxy.php", 
 						selectSize:6,
 						selectText:"Ajouter",
+						reprojectText:"Reprojeter",
 						/*
 						onChange: function(l)
 						{	map.addLayer(l);
@@ -110,7 +119,8 @@
 						*/
 						onSelect: function(l)
 						{	map.addLayer(l);
-						}
+						},
+						srs:map.projection
 					});
 		});
 	}
@@ -132,6 +142,7 @@
 		Services : 
 		<button onclick="$('#service').val('http://geoservices.brgm.fr/geologie')">BRGM</button>
 		<button onclick="$('#service').val('http://services.sandre.eaufrance.fr/geo/eth_FXX')">Sandre</button>
+		<button onclick="$('#service').val('http://cartorisque.prim.net/wms/france')">Cartorisque</button>
 		<button onclick="$('#service').val('http://tds0.ifremer.fr/thredds/wms/CORIOLIS-GLOBAL-NRTOA-OBS_TIME_SERIE')">IFREMER</button>
 		<button onclick="$('#service').val('http://maps.ngdc.noaa.gov/soap/etopo1/MapServer/WMSServer')">Noaa</button>
 		<button onclick="$('#service').val('http://webservices.nationalatlas.gov/wms')">National Atlas (US)</button>
