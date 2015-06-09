@@ -77,10 +77,7 @@ WMSCapabilities.prototype.getLayerFromCap = function(layer, options)
 	// Check srs
 	var wms, srs = options.srs;
 	delete (options.srs);
-	if (srs && !layer.srs[srs])
-	{	if (!layer.srs["EPSG:4326"]) return false;
-		wms = "WMS4326";
-	}
+	if (srs && !layer.srs[srs] && layer.srs["EPSG:4326"]) wms = "WMS4326";
 	else wms = "WMS";
 
 	// Trace
@@ -90,7 +87,7 @@ WMSCapabilities.prototype.getLayerFromCap = function(layer, options)
 				format: format,
 				transparent: true
 			}) +", "
-		+ JSON.stringify(options)) +")";
+		+ JSON.stringify(options) +")" );
 	}
 	return new OpenLayers.Layer[wms] ( options.title || layer.title, layer.url, 
 		{	layers: layer.name,
