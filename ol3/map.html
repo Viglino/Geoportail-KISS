@@ -15,9 +15,10 @@
     <link rel="stylesheet" href="../style.css" />
 
     <link rel="stylesheet" href="http://openlayers.org/en/master/css/ol.css" />
-	<script type="text/javascript" src="http://openlayers.org/en/master/build/ol.js"></script>
+	<script type="text/javascript" src="http://openlayers.org/en/master/build/ol-debug.js"></script>
 	<!-- http://openlayers.org/en/v3.2.0/build/ol.js -->
 
+	<script type="text/javascript" src="../geoportailconfig.js"></script>
 	<script type="text/javascript" src="geoportail.js"></script>
 	<script type="text/javascript" src="../apikey.js"></script>
 	
@@ -106,82 +107,64 @@
 			<input type="checkbox" id="carte" checked="checked" onchange="setLayer(this,2)" /><label for="carte">Carte IGN	</label>
 			<input class="opacity" type="range" min="0" max="1" step="0.01" value="1" onchange="setLayer(this,2,'opacity')" /><br />
 		</li>
+		<li>
+			<input type="checkbox" id="route" checked="checked" onchange="setLayer(this,3)" /><label for="route">Routes	</label>
+			<input class="opacity" type="range" min="0" max="1" step="0.01" value="1" onchange="setLayer(this,3,'opacity')" /><br />
+		</li>
 	</ul>
 	<br />
 	<p><b>Alt+Shift</b> pour Tourner</p>
 
 	<script type="text/javascript">
 
-	// Changer de layer
+	// Changer les proprietes du layer
 	function setLayer(o,l,prop)
 	{	switch (prop)
 		{	case 'opacity':
 				map.getLayers().getArray()[l].setOpacity(o.value);
 				break;
+			case 'visibility':
 			default:
 				map.getLayers().getArray()[l].setVisible(o.checked);
 				break;
 		}
 	};
-	/** Control Nord * /
-	ControlNord = function(opt_options) 
-	{	var options = opt_options || {};
-
-		var anchor = document.createElement('a');
-		anchor.href = '#rotate-north';
-		anchor.innerHTML = 'N';
-
-		var this_ = this;
-		var handleRotateNorth = function(e) 
-		{	// prevent #rotate-north anchor from getting appended to the url
-			e.preventDefault();
-			this_.getMap().getView().getView2D().setRotation(0);
-		};
-
-		anchor.addEventListener('click', handleRotateNorth, false);
-		anchor.addEventListener('touchstart', handleRotateNorth, false);
-
-		var element = document.createElement('div');
-		element.className = 'rotate-north ol-unselectable';
-		element.appendChild(anchor);
-
-		ol.control.Control.call(this, {
-			element: element,
-			target: options.target
-		});
-	};
-	ol.inherits(ControlNord, ol.control.Control);
-	
-	
-	/** */
 	
 	// OSM
 	var osm = new ol.layer.Tile(
 		{	source: new ol.source.OSM(),
 			visible: false
 		});
+	/*
 	// Carte IGN
 	var carte = new ol.layer.Tile(
-		{	source: new ol.source.Geoportail(apiKey, "GEOGRAPHICALGRIDSYSTEMS.MAPS")
+		{	source: new ol.source.Geoportail("GEOGRAPHICALGRIDSYSTEMS.MAPS", { key:apiKey } )
 		});
 	// Photo IGN
 	var ortho = new ol.layer.Tile(
-		{	source: new ol.source.Geoportail(apiKey, "ORTHOIMAGERY.ORTHOPHOTOS", {maxZoom:19}),
+		{	source: new ol.source.Geoportail("ORTHOIMAGERY.ORTHOPHOTOS", { key:apiKey, maxZoom:19}),
 			visible:false
 		});
 	var routes = new ol.layer.Tile(
 		{	title: "Routes",
-			source: new ol.source.Geoportail(apiKey, "TRANSPORTNETWORKS.ROADS", { layer:"TRANSPORTNETWORKS.ROADS", key: apiKey, "minZoom":6,"maxZoom":18, format:"image/png" }),
+			source: new ol.source.Geoportail("TRANSPORTNETWORKS.ROADS", { key: apiKey, "minZoom":6,"maxZoom":18, format:"image/png" }),
 			visible:true
 		});
+	*/
+
+	var carte = new ol.layer.Geoportail("GEOGRAPHICALGRIDSYSTEMS.MAPS");
+	// Photo IGN
+	var ortho = new ol.layer.Geoportail("ORTHOIMAGERY.ORTHOPHOTOS", {visible:false});
+	// Routes
+	var routes = new ol.layer.Geoportail("TRANSPORTNETWORKS.ROADS");
 	
 	// Les couches
-	var layers = [ortho,osm,carte,routes];
-	
-	
+	var layers = [ortho,osm,carte];
+
 	// La carte
-	var map = new ol.Map
+	var map = new ol.Map.Geoportail
 		({	target: 'map',
+			key: apiKey,
 			//renderer: ["canvas", "webgl", "dom"],  /* ["webgl", "canvas", "dom"] */
 			view: new ol.View
 			({	zoom: 7,
@@ -197,8 +180,9 @@
 			]),
 			layers: layers
 		});
-	
-		
+
+	// Ajouter apres
+	map.addLayer(routes);
 	</script>
 	
 </body>
