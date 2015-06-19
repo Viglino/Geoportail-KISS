@@ -1,4 +1,13 @@
-﻿/**
+﻿/*
+	Copyright (c) 2014 Jean-Marc VIGLINO, 
+	released under the CeCILL license (http://www.cecill.info/).
+	
+	ol.source.Geoportail : IGN's Geoportail WMTS source definition
+	ol.layer.Geoportail : IGN's Geoportail WMTS layer definition
+	ol.Map.Geoportail : IGN's Geoportail Map definition
+*/
+
+/**
 * @constructor IGN's Geoportail WMTS source definition
 * @extends {ol.source.WMTS}
 * @param {String=} layer Layer name.
@@ -112,4 +121,24 @@ ol.inherits (ol.Map.Geoportail, ol.Map);
 ol.Map.Geoportail.prototype.addLayer = function(layer)
 {	if (this.gppKey && layer.getSource().setGPPKey) layer.getSource().setGPPKey(this.gppKey);
 	return ol.Map.prototype.addLayer.apply (this, arguments);
+}
+
+/** Usefull functions
+*/
+ol.Map.prototype.getLayersByName = function(exp)
+{	return this.getLayersBy("name",exp);
+}
+
+ol.Map.prototype.getLayersBy = function(n,exp)
+{	if (!(exp instanceof RegExp)) exp = new RegExp(exp);
+	var layers = [];
+	this.getLayers().getArray().forEach(function(l)
+	{	if (exp.test(l.get(n))) layers.push(l);
+	});
+	return layers;
+}
+
+ol.View.prototype.setCenterAtLonlat = function(lonlat, zoom)
+{	this.setCenter (ol.proj.transform(lonlat, 'EPSG:4326', this.getProjection()));
+	if (zoom) this.setZoom(zoom);
 }
