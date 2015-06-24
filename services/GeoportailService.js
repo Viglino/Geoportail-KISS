@@ -148,7 +148,7 @@ var GeoportailService = function (apiKey, proxy)
 				+'</gml:envelope>';
 		}
 		xls = xls.replace ('OPTIONS',opt);
-		console.log(opt);
+		// console.log(opt);
 		// REQUETE
 		xls = xls.replace ('ADRESSE','<freeFormAddress>'+queryString+'</freeFormAddress>');
 	/*TODO : decomposition de l'adresse
@@ -168,6 +168,7 @@ var GeoportailService = function (apiKey, proxy)
 			url: geoportailConfig.url+apiKey+"/geoportail/ols",
 			dataType: "jsonp",
 			data: { output: 'json', xls: xls },
+			//timeout:5000,
 			success: function( resp )
 			{	var r, result = [] ;
 				if (resp.xml)
@@ -181,8 +182,12 @@ var GeoportailService = function (apiKey, proxy)
 					if (callback) callback( result );
 				}
 				else
-				{	callback (false, resp.statut, resp.error);
+				{	if (callback) callback (false, resp.http.status, resp.http.error);
 				}
+			},
+			error: function(resp, status, error)
+			{	console.log (resp);
+				if (callback) callback (false, status, error);
 			}
 		});
 	} ;
@@ -275,8 +280,12 @@ var GeoportailService = function (apiKey, proxy)
 					if (callback) callback (result);
 				}
 				else
-				{	callback (false, resp.statut, resp.error);
+				{	console.log ("noxml :"+resp);
+					callback (false, resp.http.status, resp.http.error);
 				}
+			},
+			error: function(resp)
+			{	console.log (resp);
 			}
 		});
 	} ;
