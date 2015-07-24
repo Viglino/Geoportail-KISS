@@ -40,7 +40,8 @@ ol.source.Geoportail = function(layer, options)
 			projection: "EPSG:3857",
 			tileGrid: tg,
 			style: options.style ? options.style:"normal",
-			attributions: attr
+			attributions: attr,
+			crossOrigin: options.crossOrigin ? options.crossOrigin :'anonymous'
 		});
 	// Save function to change apiKey
 	this._urlFunction = this.getTileUrlFunction();
