@@ -119,10 +119,19 @@ ol.Map.Geoportail = function(options)
 	// Set API key to the Geoportail layers
 	if (!options) options={};
 	this.gppKey = options.key;
-	if (this.gppKey && options.layers)
-	{	for (var i in options.layers)
-			if (options.layers[i].getSource().setGPPKey) options.layers[i].getSource().setGPPKey(this.gppKey);
+
+	// Recursive function to set layers keys even in ol.layer.Group
+	function setGPPKey(key, layers)
+	{	for (var i in layers)
+		{	if (layers[i].getSource)
+			{	if (layers[i].getSource().setGPPKey) layers[i].getSource().setGPPKey(key);
+			}
+			else 
+			{	if (layers[i].getLayers) setGPPKey (key, layers[i].getLayers().getArray());
+			}
+		}
 	}
+	if (this.gppKey && options.layers) setGPPKey(this.gppKey, options.layers);
 }
 ol.inherits (ol.Map.Geoportail, ol.Map);
 
@@ -154,30 +163,4 @@ ol.View.prototype.setCenterAtLonlat = function(lonlat, zoom)
 	if (zoom) this.setZoom(zoom);
 }
 
-
-/**
- * Return a preview image of the layer.
- * @param {ol.Coordinate|undefined} lonlat The center of the preview.
- * @param {number} resolution of the preview.
- * @return {String} the preview url
- * @api
- */
-ol.source.Source.prototype.getPreview = function(lonlat, resolution, resolution)
-{	return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAk6QAAJOkBUCTn+AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANeSURBVHic7ZpPiE1RHMc/780MBhkik79JSUlIUbOxI+wkI2yRhYSUlJLNpJF/xcpiJBmZGBZsNM1CkmhKITGkGbH0/BuPmXnP4rxbb/TOn3fvOffeec6nfqvb/b7f93fveeec37ng8Xg8Ho/nf6Uu4d+fDswFssCvhHOJhaXAMeApMAQUyyIPPAdOAiuTStAVy4EHjDWsix5gdRLJ2mY34ulWYz6IEeA4kIk9awtkgTOEM/5vdAKT4k0/Ou3YMR/ELcbRm9AKFLBbgCJwNE4TYZkJfMG++SIwDCyLz0o4bI17WdyJz0r1TAZ+oDcxCBwAFgIzEIuhvcBbg3sLwOK4DFXLFvQGniCGSSUagS4DjUPOHESkA3XiOWCORqMR6Nfo9DjI3QqPUSd+ylBnv0Zn0GrWFvmIOvGNhjqrNDp/EAutyFgRKUM2tgO+Gur81FxvAKYZaimxXYBvmuuLDHWWaK4X0RfJCNsF6NdcbzXU2a65PohYFKWOc+jn8PUajbWIXaBKp9NB7lZYh34OzwFbFfd/NtDYYSth27urLGIm0M31AL3APWAAmIooymaDnPIl/Vz4NN1yHrd7gcvxWQnHAuA3bsyPop8hUsE13BSgK04TUViBeFo2zedJ8S6wElexW4D2eNOPTjNi6WvD/DtEr8E6tk6GGoAmxFY2iFHE9NZiQf8gogiB9gTEH23izAZuE77vHyU+ANucO1QwD3hD/MbLowAcdm20EmkwXx4n3NodS9rMB2HabYpEWs0HcRqHp0fNwAvJD+eBTZr7p6BvmQVxUaEzEbiruNfJekH15L8jtrEm7JJolEcOmKXRqQOuKDQuY7HZY8s8iNfzkSLxIuI43FTrkkLnOlBfRW4VsWk+oAX5weknxFAxJQNckGgVgZuIRVoomoGXEmGTMa+iQ6K7M4SW7k24QYgiuDQPYinbhugiF4H3RGtzZYCzyIvQXfpNI1ybLyeLpf5+iTbkRbiP2EcocTHm4+YI8iI8RFHwWjAfsA95Q+YZFU6wasl8wB7kReijtNbIILa0vcg/PRlGfPQwHmlCviDqAzaA+OREtzqr1ejOIDorxlNEjTGUBV4nnUWCvAJxGDlA8q9j3DEArAn2zvXAfOwfl6eVAmJrPpJ0Ih6Px+PxeJLjLwPul3vj5d0eAAAAAElFTkSuQmCC";
-}
-
-/**
- * Return the tile image of the layer.
- * @param {ol.Coordinate|undefined} lonlat The center of the preview.
- * @param {number} resolution of the preview.
- * @return {String} the preview url
- * @api
- */
-ol.source.Tile.prototype.getPreview = function(lonlat, resolution)
-{	if (!lonlat) lonlat = [21020, 6355964];
-	if (!resolution) resolution = 150;
-	var coord = this.getTileGrid().getTileCoordForCoordAndResolution(lonlat, resolution);
-	var fn = this.getTileUrlFunction();
-	return fn.call(this, coord, this.getProjection());
-}
 
