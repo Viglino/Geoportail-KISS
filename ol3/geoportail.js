@@ -32,19 +32,39 @@ ol.source.Geoportail = function(layer, options)
 	tg.minZoom = (options.minZoom ? options.minZoom:0);
 	var attr = [ ol.source.Geoportail.prototype.attribution ];
 	if (options.attributions) attr.push(options.attributions);
-	ol.source.WMTS.call (this, 
-		{	url: "http://wxs.ign.fr/" + options.key + "/wmts",
-			layer: layer,
-			matrixSet: "PM",
-			format: options.format ? options.format:"image/jpeg",
-			projection: "EPSG:3857",
-			tileGrid: tg,
-			style: options.style ? options.style:"normal",
-			attributions: attr,
-			crossOrigin: options.crossOrigin ? options.crossOrigin :'anonymous'
-		});
+	wmts_options = 
+	{	url: "http://wxs.ign.fr/" + options.key + "/wmts",
+		layer: layer,
+		matrixSet: "PM",
+		format: options.format ? options.format:"image/jpeg",
+		projection: "EPSG:3857",
+		tileGrid: tg,
+		style: options.style ? options.style:"normal",
+		attributions: attr,
+	};
+	if (options.crossOrigin!==false) wmts_options.crossOrigin = 'anonymous';
+	ol.source.WMTS.call (this, wmts_options);
+
 	// Save function to change apiKey
 	this._urlFunction = this.getTileUrlFunction();
+
+	// Async image loading
+	this.getImageAsync = options.getImageAsync;
+	// Change tileloadFunction to load async images
+	_tileLoadFunction = this.getTileLoadFunction();
+	var self = this;
+	this.tileLoadFunction = function(imageTile, url) 
+	{	if (!self.getImageAsync) _tileLoadFunction.apply(this, arguments);	
+		else
+		{	var img = imageTile.getImage();
+			var image = new Image;
+			image.onload = function()
+			{	img.src = image.src;
+				self.changed();
+			}
+			self.getImageAsync(image, imageTile.getTileCoord(), url);
+		}
+	}
 };
 ol.inherits (ol.source.Geoportail, ol.source.WMTS);
 
