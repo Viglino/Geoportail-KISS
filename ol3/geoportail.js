@@ -41,30 +41,13 @@ ol.source.Geoportail = function(layer, options)
 		tileGrid: tg,
 		style: options.style ? options.style:"normal",
 		attributions: attr,
+		crossOrigin: (typeof options.crossOrigin == 'undefined') ? 'anonymous' : options.crossOrigin
 	};
-	if (options.crossOrigin!==false) wmts_options.crossOrigin = 'anonymous';
 	ol.source.WMTS.call (this, wmts_options);
 
 	// Save function to change apiKey
 	this._urlFunction = this.getTileUrlFunction();
 
-	// Async image loading
-	this.getImageAsync = options.getImageAsync;
-	// Change tileloadFunction to load async images
-	_tileLoadFunction = this.getTileLoadFunction();
-	var self = this;
-	this.tileLoadFunction = function(imageTile, url) 
-	{	if (!self.getImageAsync) _tileLoadFunction.apply(this, arguments);	
-		else
-		{	var img = imageTile.getImage();
-			var image = new Image;
-			image.onload = function()
-			{	img.src = image.src;
-				self.changed();
-			}
-			self.getImageAsync(image, imageTile.getTileCoord(), url);
-		}
-	}
 };
 ol.inherits (ol.source.Geoportail, ol.source.WMTS);
 
@@ -114,14 +97,23 @@ ol.layer.Geoportail = function(layer, options, tileoptions)
 	var capabilities = window.geoportailConfig ? geoportailConfig.capabilities[options.key] || geoportailConfig.capabilities["default"] : {};
 	capabilities = capabilities[options.layer] || {};
 
+	// tileoptions default params
 	for (var i in capabilities) if (typeof	tileoptions[i]== "undefined") tileoptions[i] = capabilities[i];
 
 	if (!tileoptions.key) tileoptions.key = options.key;
 	options.source = new ol.source.Geoportail(options.layer, tileoptions);
-	options.name = capabilities.title;
-	options.desc = capabilities.desc;
+	if (!options.name) options.name = capabilities.title;
+	if (!options.desc) options.desc = capabilities.desc;
 
+	// calculate layer max resolution
+	if (!options.maxResolution && tileoptions.minZoom)
+	{	options.source.getTileGrid().minZoom -= (tileoptions.minZoom>1 ? 2 : 1);
+		options.maxResolution = options.source.getTileGrid().getResolution(options.source.getTileGrid().minZoom)
+		options.source.getTileGrid().minZoom = tileoptions.minZoom;
+	}
+	
 	ol.layer.Tile.call (this, options);	
+
 };
 ol.inherits (ol.layer.Geoportail, ol.layer.Tile);
 
@@ -165,10 +157,24 @@ ol.Map.Geoportail.prototype.addLayer = function(layer)
 
 /** Usefull functions
 */
+
+/**
+ * Get layers in a map giving his name
+ * @param {String|RegExp} exp The name of the layer or a regexp.
+ * @return {Array<ol.layer>} an array of layer
+ * @api stable
+ */
 ol.Map.prototype.getLayersByName = function(exp)
 {	return this.getLayersBy("name",exp);
 }
 
+/**
+ * Get layers in a map giving an attribute
+ * @param {String} n Name of the attribute to search for.
+ * @param {String|RegExp} exp attribute of the layer or a regexp.
+ * @return {Array<ol.layer>} an array of layer
+ * @api stable
+ */
 ol.Map.prototype.getLayersBy = function(n,exp)
 {	if (!(exp instanceof RegExp)) exp = new RegExp(exp);
 	var layers = [];
@@ -178,9 +184,34 @@ ol.Map.prototype.getLayersBy = function(n,exp)
 	return layers;
 }
 
-ol.View.prototype.setCenterAtLonlat = function(lonlat, zoom)
+/**
+ * Set the center of the current view.
+ * @param {ol.Coordinate} center The center of the view in EPSG:4326.
+ * @param {number} zoom Zoom level.
+ * @api stable
+ */
+ ol.View.prototype.setCenterAtLonlat = function(lonlat, zoom)
 {	this.setCenter (ol.proj.transform(lonlat, 'EPSG:4326', this.getProjection()));
 	if (zoom) this.setZoom(zoom);
 }
 
+
+/**
+ * Static function : ol.Attribution.getUniqueAttribution
+ * Get a unique attribution ie. with the same attribution markup.
+ * @param {olx.AttributionOptions} options Attribution options.
+ * @return {ol.Attribution} The attribution HTML.
+ * @api stable
+ */
+ol.Attribution.uniqueAttributionList = [];
+
+ol.Attribution.getUniqueAttribution = function(a)
+{	// Search existing
+	for (var i=0; i<this.uniqueAttributionList.length; i++)
+		if (this.uniqueAttributionList[i].getHTML() == a.html) return this.uniqueAttributionList[i];
+	// Create new one
+	var u = new ol.Attribution(a);
+	this.uniqueAttributionList.push(u);
+	return u;
+};
 
