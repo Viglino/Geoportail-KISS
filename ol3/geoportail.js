@@ -41,7 +41,8 @@ ol.source.Geoportail = function(layer, options)
 		tileGrid: tg,
 		style: options.style ? options.style:"normal",
 		attributions: attr,
-		crossOrigin: (typeof options.crossOrigin == 'undefined') ? 'anonymous' : options.crossOrigin
+		crossOrigin: (typeof options.crossOrigin == 'undefined') ? 'anonymous' : options.crossOrigin,
+		wrapX: !(options.wrapX===false)
 	};
 	ol.source.WMTS.call (this, wmts_options);
 
