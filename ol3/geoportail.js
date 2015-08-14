@@ -152,7 +152,7 @@ ol.inherits (ol.Map.Geoportail, ol.Map);
 *	Set the API key to Geoportail layers when added
 */
 ol.Map.Geoportail.prototype.addLayer = function(layer)
-{	if (this.gppKey && layer.getSource().setGPPKey) layer.getSource().setGPPKey(this.gppKey);
+{	if (this.gppKey && layer.getSource() && layer.getSource().setGPPKey) layer.getSource().setGPPKey(this.gppKey);
 	return ol.Map.prototype.addLayer.apply (this, arguments);
 }
 
@@ -207,7 +207,9 @@ ol.Map.prototype.getLayersBy = function(n,exp)
 ol.Attribution.uniqueAttributionList = [];
 
 ol.Attribution.getUniqueAttribution = function(a)
-{	// Search existing
+{	if (!a) a = {};
+	if (typeof(a)=="string") a = {html:a};
+	// Search existing
 	for (var i=0; i<this.uniqueAttributionList.length; i++)
 		if (this.uniqueAttributionList[i].getHTML() == a.html) return this.uniqueAttributionList[i];
 	// Create new one
