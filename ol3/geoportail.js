@@ -1,4 +1,4 @@
-﻿/*
+﻿156/*
 	Copyright (c) 2014 Jean-Marc VIGLINO, 
 	released under the CeCILL license (http://www.cecill.info/).
 	
@@ -73,7 +73,8 @@ ol.source.Geoportail.prototype.setGPPKey = function(key)
 	url[0] = url[0].replace (/(http:\/\/wxs.ign.fr\/)(.*)(\/.*)/, "$1"+key+"$3");
 	this.setTileUrlFunction ( function()
 	{	var url = this._urlFunction.apply(this, arguments);
-		return url.replace (/(http:\/\/wxs.ign.fr\/)(.*)(\/.*)/, "$1"+key+"$3");
+		if (url) return url.replace (/(http:\/\/wxs.ign.fr\/)(.*)(\/.*)/, "$1"+key+"$3");
+		else return url;
 	});
 }
 
@@ -152,7 +153,7 @@ ol.inherits (ol.Map.Geoportail, ol.Map);
 *	Set the API key to Geoportail layers when added
 */
 ol.Map.Geoportail.prototype.addLayer = function(layer)
-{	if (this.gppKey && layer.getSource() && layer.getSource().setGPPKey) layer.getSource().setGPPKey(this.gppKey);
+{	if (this.gppKey && layer.getSource && layer.getSource() && layer.getSource().setGPPKey) layer.getSource().setGPPKey(this.gppKey);
 	return ol.Map.prototype.addLayer.apply (this, arguments);
 }
 
@@ -179,9 +180,13 @@ ol.Map.prototype.getLayersByName = function(exp)
 ol.Map.prototype.getLayersBy = function(n,exp)
 {	if (!(exp instanceof RegExp)) exp = new RegExp(exp);
 	var layers = [];
-	this.getLayers().getArray().forEach(function(l)
-	{	if (exp.test(l.get(n))) layers.push(l);
-	});
+	function findLayers(o)
+	{	o.getLayers().getArray().forEach(function(l)
+		{	if (exp.test(l.get(n))) layers.push(l);
+			if (l.getLayers) findLayers(l);
+		});
+	}
+	findLayers(this);
 	return layers;
 }
 
