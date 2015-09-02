@@ -106,6 +106,10 @@ ol.layer.Geoportail = function(layer, options, tileoptions)
 	options.source = new ol.source.Geoportail(options.layer, tileoptions);
 	if (!options.name) options.name = capabilities.title;
 	if (!options.desc) options.desc = capabilities.desc;
+	if (!options.extent) 
+	{	if (capabilities.bbox[0]>-170 && capabilities.bbox[2]<170)
+			options.extent = ol.proj.transformExtent(capabilities.bbox, 'EPSG:4326', 'EPSG:3857');
+	}
 
 	// calculate layer max resolution
 	if (!options.maxResolution && tileoptions.minZoom)
