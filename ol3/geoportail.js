@@ -1,4 +1,4 @@
-﻿156/*
+﻿/*
 	Copyright (c) 2014 Jean-Marc VIGLINO, 
 	released under the CeCILL license (http://www.cecill.info/).
 	
