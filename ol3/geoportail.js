@@ -33,7 +33,7 @@ ol.source.Geoportail = function(layer, options)
 	var attr = [ ol.source.Geoportail.prototype.attribution ];
 	if (options.attributions) attr.push(options.attributions);
 	wmts_options = 
-	{	url: "//wxs.ign.fr/" + options.key + "/wmts",
+	{	url: ol.source.Geoportail.serviceURL + options.key + "/wmts",
 		layer: layer,
 		matrixSet: "PM",
 		format: options.format ? options.format:"image/jpeg",
@@ -52,6 +52,9 @@ ol.source.Geoportail = function(layer, options)
 };
 ol.inherits (ol.source.Geoportail, ol.source.WMTS);
 
+/** Service URL
+*/
+ol.source.Geoportail.serviceURL = "//wxs.ign.fr/";
 
 /**
  * Return the associated API key of the Map.
@@ -61,7 +64,8 @@ ol.inherits (ol.source.Geoportail, ol.source.WMTS);
  */
 ol.source.Geoportail.prototype.getGPPKey = function()
 {	var url = this.getUrls()[0];
-	return url.replace (/\/\/wxs.ign.fr\/(.*)\/.*/,"$1");
+	var r = new RegExp(ol.source.Geoportail.serviceURL+"(.*)\/.*");
+	return url.replace (r,"$1");
 }
 /**
  * Set the associated API key to the Map.
@@ -70,10 +74,11 @@ ol.source.Geoportail.prototype.getGPPKey = function()
  */
 ol.source.Geoportail.prototype.setGPPKey = function(key)
 {	var url = this.getUrls();
-	url[0] = url[0].replace (/(\/\/wxs.ign.fr\/)(.*)(\/.*)/, "$1"+key+"$3");
+	var r = new RegExp("("+ol.source.Geoportail.serviceURL+")(.*)(\/.*)");
+	url[0] = url[0].replace (r, "$1"+key+"$3");
 	this.setTileUrlFunction ( function()
 	{	var url = this._urlFunction.apply(this, arguments);
-		if (url) return url.replace (/(\/\/wxs.ign.fr\/)(.*)(\/.*)/, "$1"+key+"$3");
+		if (url) return url.replace (r, "$1"+key+"$3");
 		else return url;
 	});
 }
