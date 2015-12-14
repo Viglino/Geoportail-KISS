@@ -9,7 +9,7 @@
 */
 var geoportailConfig =
 {	// url of the services
-	url: "http://wxs.ign.fr/",
+	url: "//wxs.ign.fr/",
 	// Default layer capabilities
 	capabilities:
 	{	"default":

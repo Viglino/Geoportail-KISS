@@ -54,7 +54,7 @@ ol.inherits (ol.source.Geoportail, ol.source.WMTS);
 
 /** Service URL
 */
-ol.source.Geoportail.serviceURL = "//wxs.ign.fr/";
+ol.source.Geoportail.serviceURL = window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/";
 
 /**
  * Return the associated API key of the Map.
