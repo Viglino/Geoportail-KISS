@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <!----------------------------------------------------------
  
@@ -50,7 +50,7 @@ function getcapabilities(key)
 		js = "geoportailConfig.capabilities['"+(key?key:'default')+"']=\n"+js;
 		$("#json").val(js);
 		$("body").css("opacity",1)
-	});
+	}, $("#all").is(':checked') );
 
 	return;
 }
@@ -70,6 +70,7 @@ function getcapabilities(key)
 	<br />
 	<input id='mef' type="checkbox" /><label for="mef"> Mise en forme </label>
 	<input id='desc' type="checkbox" /><label for="desc"> Inclure la description </label>
+	<input id='all' type="checkbox" /><label for="all"> Tout type </label>
 	<input type="button" onclick="getcapabilities()" value='Charger...' style="margin:0 1em"/>
 </body>
 </html>
