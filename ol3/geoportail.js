@@ -32,8 +32,14 @@ ol.source.Geoportail = function(layer, options)
 	tg.minZoom = (options.minZoom ? options.minZoom:0);
 	var attr = [ ol.source.Geoportail.prototype.attribution ];
 	if (options.attributions) attr.push(options.attributions);
+
+	var url = this.serviceURL();
+
+	this._server = options.server;
+	this.gppKey = options.key;
+
 	wmts_options = 
-	{	url: ol.source.Geoportail.serviceURL() + options.key + "/wmts",
+	{	url: this.serviceURL(),
 		layer: layer,
 		matrixSet: "PM",
 		format: options.format ? options.format:"image/jpeg",
@@ -54,8 +60,11 @@ ol.inherits (ol.source.Geoportail, ol.source.WMTS);
 
 /** Service URL
 */
-ol.source.Geoportail.serviceURL = function()
-{	return window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/";
+ol.source.Geoportail.prototype.serviceURL = function()
+{	if (this._server) 
+	{	return this._server.replace (/^(https?:\/\/[^\/]*)(.*)$/, "$1/"+this.gppKey+"$2") ;
+	}
+	else return (window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/") +this.gppKey+ "/wmts" ;
 }
 
 /**
@@ -65,9 +74,7 @@ ol.source.Geoportail.serviceURL = function()
  * @api stable
  */
 ol.source.Geoportail.prototype.getGPPKey = function()
-{	var url = this.getUrls()[0];
-	var r = new RegExp(ol.source.Geoportail.serviceURL()+"(.*)\/.*");
-	return url.replace (r,"$1");
+{	return this.gppKey;
 }
 /**
  * Set the associated API key to the Map.
@@ -75,12 +82,14 @@ ol.source.Geoportail.prototype.getGPPKey = function()
  * @api stable
  */
 ol.source.Geoportail.prototype.setGPPKey = function(key)
-{	var url = this.getUrls();
-	var r = new RegExp("("+ol.source.Geoportail.serviceURL()+")(.*)(\/.*)");
-	url[0] = url[0].replace (r, "$1"+key+"$3");
+{	this.gppKey = key;
+	var serviceURL = this.serviceURL();
 	this.setTileUrlFunction ( function()
 	{	var url = this._urlFunction.apply(this, arguments);
-		if (url) return url.replace (r, "$1"+key+"$3");
+		if (url) 
+		{	var args = url.split("?");
+			return serviceURL+"?"+args[1];
+		}
 		else return url;
 	});
 }

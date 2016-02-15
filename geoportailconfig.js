@@ -1600,6 +1600,7 @@ geoportailConfig.jqautoconf = function(key, success, all)
 				if (!/WMTS/.test(l.find("Server").attr("service"))) continue;
 				if (!all && !/geoportail\/wmts/.test(l.find("OnlineResource").attr("href"))) continue;
 				var service = js[l.find("Name:first").text()] = {};
+				service.server = l.find("Server").find("OnlineResource").attr("href");
 				service.title = l.find("Title:first").text();
 				service.order = l.find("Extension Layer").attr("order");
 				service.format = l.find("Format:first").text();
