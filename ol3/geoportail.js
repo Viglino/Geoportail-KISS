@@ -113,7 +113,8 @@ ol.layer.Geoportail = function(layer, options, tileoptions)
 	options.layer = layer;
 
 	var capabilities = window.geoportailConfig ? geoportailConfig.capabilities[options.key] || geoportailConfig.capabilities["default"] : {};
-	capabilities = capabilities[options.layer] || {};
+	capabilities = capabilities[options.layer];
+	if (!capabilities) throw new Error("ol.layer.Geoportail: no layer definition for \""+layer+"\"");
 
 	// tileoptions default params
 	for (var i in capabilities) if (typeof	tileoptions[i]== "undefined") tileoptions[i] = capabilities[i];
