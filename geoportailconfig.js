@@ -1611,11 +1611,11 @@ geoportailConfig.jqautoconf = function(key, success, all)
 				service.bbox = getBbox (l.find("Extension BoundingBox:first").text());
 				service.desc = l.find("Abstract:first").text();
 				service.keys = l.find("Thematic").text();
-				service.qlook = l.find("QuickLook OnlineResource").attr("xlink:href");
+				service.qlook = l.find("QuickLook OnlineResource").attr("href");
 				if (/NOPIC|defaut/.test(service.qlook)) delete service.qlook;
 				service.legend = [];
 				l.find("LegendURL OnlineResource").each(function()
-				{	if (!/NOLEGEND/.test($(this).attr("xlink:href"))) service.legend .push ($(this).attr("xlink:href"));
+				{	if (!/NOLEGEND/.test($(this).attr("href"))) service.legend.push ($(this).attr("href"));
 				});
 				service.originators = {};
 				l.find("Originators Originator").each(function()
