@@ -1587,7 +1587,6 @@ geoportailConfig.jqautoconf = function(key, success, all)
 		for (var k=0; k<bbox.length; k++) bbox[k] = Number(bbox[k]);
 		return bbox;
 	}
-
 	$.ajax("http://wxs.ign.fr/"+key+"/autoconf/?output=json",
 	{	dataType:"jsonp",
 		success:function(resp, status)
@@ -1600,7 +1599,8 @@ geoportailConfig.jqautoconf = function(key, success, all)
 				if (!/WMTS/.test(l.find("Server").attr("service"))) continue;
 				if (!all && !/geoportail\/wmts/.test(l.find("OnlineResource").attr("href"))) continue;
 				var service = js[l.find("Name:first").text()] = {};
-				service.server = l.find("Server").find("OnlineResource").attr("href");
+				//service.server = l.find("Server").find("OnlineResource").attr("href");
+				service.server = l.find("Key").text().replace(key+"/","");
 				service.title = l.find("Title:first").text();
 				service.order = l.find("Extension Layer").attr("order");
 				service.format = l.find("Format:first").text();
