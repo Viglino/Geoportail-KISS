@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!----------------------------------------------------------
  
 	Copyright (c) 2013 Jean-Marc VIGLINO, 
@@ -13,12 +13,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <link rel="stylesheet" href="../style.css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="http://openlayers.org/en/master/css/ol.css" />
 	<script type="text/javascript" src="http://openlayers.org/en/master/build/ol.js"></script>
 	<!-- http://openlayers.org/en/v3.2.0/build/ol.js -->
 
 	<script type="text/javascript" src="../geoportailconfig.js"></script>
+	<link rel="stylesheet" href="geoportail.css" />
 	<script type="text/javascript" src="geoportail.js"></script>
 	<script type="text/javascript" src="../apikey.js"></script>
 	
@@ -112,6 +114,9 @@
 			<input class="opacity" type="range" min="0" max="1" step="0.01" value="1" onchange="setLayer(this,3,'opacity')" /><br />
 		</li>
 	</ul>
+	<br />
+	<input id="logo" type="checkbox" onchange="map.setAttributionsMode(this.checked?'logo':'text')" />
+	<label for="logo">Afficher les logos dans l'attibution.</label>
 	<br />
 	<p><b>Alt+Shift</b> pour Tourner</p>
 

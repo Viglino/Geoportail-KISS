@@ -31,7 +31,7 @@ ol.source.Geoportail = function(layer, options)
 			});
 	tg.minZoom = (options.minZoom ? options.minZoom:0);
 	var attr = [ ol.source.Geoportail.prototype.attribution ];
-	if (options.attributions) attr.push(options.attributions);
+	if (options.attributions) attr = options.attributions;
 
 	var url = this.serviceURL();
 
@@ -119,6 +119,8 @@ ol.layer.Geoportail = function(layer, options, tileoptions)
 	// tileoptions default params
 	for (var i in capabilities) if (typeof	tileoptions[i]== "undefined") tileoptions[i] = capabilities[i];
 
+	this._originators = capabilities.originators;
+
 	if (!tileoptions.key) tileoptions.key = options.key;
 	options.source = new ol.source.Geoportail(options.layer, tileoptions);
 	if (!options.name) options.name = capabilities.title;
@@ -135,7 +137,7 @@ ol.layer.Geoportail = function(layer, options, tileoptions)
 		options.source.getTileGrid().minZoom = tileoptions.minZoom;
 	}
 	
-	ol.layer.Tile.call (this, options);	
+	ol.layer.Tile.call (this, options);
 
 };
 ol.inherits (ol.layer.Geoportail, ol.layer.Tile);
@@ -167,15 +169,106 @@ ol.Map.Geoportail = function(options)
 		}
 	}
 	if (this.gppKey && options.layers) setGPPKey(this.gppKey, options.layers);
-}
+
+	this._attributionMode = options.attributionMode;
+	this.setLayerAttributions();
+
+	// Attribution on layers depend on position/zoom
+	self = this;
+	this.getView().on ("propertychange", function(e)
+	{	switch (e.key)
+		{	case "center":
+			case "resolution":
+			{	self.setLayerAttributions();
+			}
+		}
+	});
+};
 ol.inherits (ol.Map.Geoportail, ol.Map);
+
+(function(){
+
+// Flush event queue before refresh attributions
+var count = 0;
+
+function delayAttribution (map, force)
+{	if (!force)
+	{	count++;
+		setTimeout (function(){ delayAttribution(map, true); }, 200);
+		return;
+	}
+	count--;
+	if (count==0)
+	{	var ex = map.getView().calculateExtent(map.getSize());
+		ex = ol.proj.transformExtent (ex, map.getView().getProjection(), "EPSG:4326");
+		var z = map.getView().getZoom();
+		map.getLayers().forEach(function(l)
+		{	if (l._originators)
+			{	var attrib = [];
+				var maxZoom = 0;
+				for (var a in l._originators)
+				{	var o = l._originators[a];
+					for (var i=0; i<o.constraint.length; i++)
+					{	if (o.constraint[i].maxZoom > maxZoom
+						  && ol.extent.intersects(ex, o.constraint[i].bbox))
+						{	maxZoom = o.constraint[i].maxZoom;
+						}
+					}	
+				}
+				if (maxZoom < z) z = maxZoom;
+				if (z < l.getSource().getTileGrid().getMinZoom())
+				{	z = l.getSource().getTileGrid().getMinZoom();
+				}
+				for (var a in l._originators)
+				{	var o = l._originators[a];
+					for (var i=0; i<o.constraint.length; i++)
+					{	if ( z <= o.constraint[i].maxZoom 
+						  && z >= o.constraint[i].minZoom 
+						  && ol.extent.intersects(ex, o.constraint[i].bbox))
+						{	if (map._attributionMode=="logo") 
+							{	attrib.push ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
+									+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>') );
+							}
+							else
+							{	attrib.push ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'">'+a+'</a>') );
+							}
+							break;
+						}
+					}
+				}
+				l.getSource().setAttributions(attrib);
+			}
+		});
+	}
+};
+
+/** Set Attribution according to layers attribution and map position
+*/
+ol.Map.Geoportail.prototype.setLayerAttributions = function()
+{	delayAttribution(this);
+};
+
+/** Set Attribution mode
+* @param {text|logo}
+*/
+ol.Map.Geoportail.prototype.setAttributionsMode = function(mode)
+{	this._attributionMode = mode;
+	var div = this.getTargetElement().firstChild;
+	div.className = div.className.replace(/ ol\-attributionlogo/g, "");
+	if (mode=="logo") div.className += " ol-attributionlogo";
+	this.setLayerAttributions();
+};
+
+})();
 
 /**
 *	Set the API key to Geoportail layers when added
 */
 ol.Map.Geoportail.prototype.addLayer = function(layer)
 {	if (this.gppKey && layer.getSource && layer.getSource() && layer.getSource().setGPPKey) layer.getSource().setGPPKey(this.gppKey);
-	return ol.Map.prototype.addLayer.apply (this, arguments);
+	var l = ol.Map.prototype.addLayer.apply (this, arguments);
+	this.setLayerAttributions();
+	return l;
 }
 
 /** Usefull functions

@@ -1,1 +1,15 @@
-﻿
+﻿.ol-attributionlogo .ol-attribution img 
+{	max-height: 3em;
+	vertical-align: text-bottom;
+	opacity: 0.85;
+}
+.ol-attributionlogo .ol-attribution img:hover
+{	opacity: 1;
+}
+.ol-attributionlogo .ol-attribution:not(.ol-collapsed)
+{	background: none;
+	height: auto;
+}
+.ol-attributionlogo .ol-attribution ul
+{	vertical-align: bottom;
+}
