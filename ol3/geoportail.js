@@ -194,27 +194,15 @@ var count = 0;
 function getAttrib (map, a, o)
 {	// Default attribution > IGN
 	if (!a) 
-	{	if (map._attributionMode=="logo") 
-		{	for (var i=0; i<ol.Attribution.uniqueAttributionList.length; i++)
-			{	if (/www\.ign\.fr.*\<img/.test(ol.Attribution.uniqueAttributionList[i].getHTML())) 
-					return ol.Attribution.uniqueAttributionList[i];
-			}
-		}
-		else
-		{	for (var i=0; i<ol.Attribution.uniqueAttributionList.length; i++)
-			{	if (/\>IGN\</.test(ol.Attribution.uniqueAttributionList[i].getHTML())) 
-					return ol.Attribution.uniqueAttributionList[i];
-			}
-		}
-		return ol.Attribution.getUniqueAttribution();
+	{	return ol.Attribution.uniqueAttributionKey["IGN"] || ol.Attribution.getUniqueAttribution();
 	}
 	// Create attribution
 	if (map._attributionMode=="logo") 
 	{	return ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
-				+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>') );
+				+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>', a+"_logo" ));
 	}
 	else
-	{	return ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'">'+a+'</a>') );
+	{	return ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'">'+a+'</a>', a ));
 	}
 }
 
@@ -341,21 +329,33 @@ ol.Map.prototype.getLayersBy = function(n,exp)
 /**
  * Static function : ol.Attribution.getUniqueAttribution
  * Get a unique attribution ie. with the same attribution markup.
+ * if a key is provided get the attribution corresponding to the key.
  * @param {olx.AttributionOptions} options Attribution options.
  * @return {ol.Attribution} The attribution HTML.
  * @api stable
  */
 ol.Attribution.uniqueAttributionList = [];
+ol.Attribution.uniqueAttributionKey = {};
 
-ol.Attribution.getUniqueAttribution = function(a)
+ol.Attribution.getUniqueAttribution = function(a, key)
 {	if (!a) a = { html:"" };
 	if (typeof(a)=="string") a = {html:a};
-	// Search existing
-	for (var i=0; i<this.uniqueAttributionList.length; i++)
-		if (this.uniqueAttributionList[i].getHTML() == a.html) return this.uniqueAttributionList[i];
-	// Create new one
-	var u = new ol.Attribution(a);
-	this.uniqueAttributionList.push(u);
-	return u;
+	if (key)
+	{	var attr = this.uniqueAttributionKey[key];
+		if (!attr)
+		{	attr = this.uniqueAttributionKey[key] = new ol.Attribution(a);
+		}
+		return attr;
+	}
+	else
+	{
+		// Search existing
+		for (var i=0; i<this.uniqueAttributionList.length; i++)
+			if (this.uniqueAttributionList[i].getHTML() == a.html) return this.uniqueAttributionList[i];
+		// Create new one
+		var u = new ol.Attribution(a);
+		this.uniqueAttributionList.push(u);
+		return u;
+	}
 };
 
