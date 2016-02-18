@@ -191,6 +191,33 @@ ol.inherits (ol.Map.Geoportail, ol.Map);
 // Flush event queue before refresh attributions
 var count = 0;
 
+function getAttrib (map, a, o)
+{	// Default attribution > IGN
+	if (!a) 
+	{	if (map._attributionMode=="logo") 
+		{	for (var i=0; i<ol.Attribution.uniqueAttributionList.length; i++)
+			{	if (/www\.ign\.fr.*\<img/.test(ol.Attribution.uniqueAttributionList[i].getHTML())) 
+					return ol.Attribution.uniqueAttributionList[i];
+			}
+		}
+		else
+		{	for (var i=0; i<ol.Attribution.uniqueAttributionList.length; i++)
+			{	if (/\>IGN\</.test(ol.Attribution.uniqueAttributionList[i].getHTML())) 
+					return ol.Attribution.uniqueAttributionList[i];
+			}
+		}
+		return ol.Attribution.getUniqueAttribution();
+	}
+	// Create attribution
+	if (map._attributionMode=="logo") 
+	{	return ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
+				+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>') );
+	}
+	else
+	{	return ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'">'+a+'</a>') );
+	}
+}
+
 function delayAttribution (map, force)
 {	if (!force)
 	{	count++;
@@ -225,17 +252,12 @@ function delayAttribution (map, force)
 					{	if ( z <= o.constraint[i].maxZoom 
 						  && z >= o.constraint[i].minZoom 
 						  && ol.extent.intersects(ex, o.constraint[i].bbox))
-						{	if (map._attributionMode=="logo") 
-							{	attrib.push ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
-									+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>') );
-							}
-							else
-							{	attrib.push ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'">'+a+'</a>') );
-							}
+						{	attrib.push (getAttrib(map, a, o));
 							break;
 						}
 					}
 				}
+				if (!attrib.length) attrib.push ( getAttrib(map) );
 				l.getSource().setAttributions(attrib);
 			}
 		});
@@ -326,7 +348,7 @@ ol.Map.prototype.getLayersBy = function(n,exp)
 ol.Attribution.uniqueAttributionList = [];
 
 ol.Attribution.getUniqueAttribution = function(a)
-{	if (!a) a = {};
+{	if (!a) a = { html:"" };
 	if (typeof(a)=="string") a = {html:a};
 	// Search existing
 	for (var i=0; i<this.uniqueAttributionList.length; i++)
