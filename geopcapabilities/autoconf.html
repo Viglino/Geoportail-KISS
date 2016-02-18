@@ -47,6 +47,10 @@ function getcapabilities(key)
 		{	js = JSON.stringify(js);
 			$("#json").attr("wrap","");
 		}
+		// GPP encoding bug
+		if (/Ã/.test(js))
+		{	js = js.replace(/Ã¢/g,"â").replace(/Ã´/g,"ô").replace(/Ã‰/g,"É").replace(/Â®/g,"®").replace(/Ã/g,"à ");
+		}
 		js = "geoportailConfig.capabilities['"+(key?key:'default')+"']=\n"+js;
 		$("#json").val(js);
 		$("body").css("opacity",1)
