@@ -241,31 +241,10 @@ function setLayerAttribution (l, ex, z, mode)
 	}
 }
 
-// Flush event queue before refresh attributions
-var count = 0;
-
-function delayAttribution (map, force)
-{	if (!force)
-	{	count++;
-		setTimeout (function(){ delayAttribution(map, true); }, 200);
-		return;
-	}
-	if ((--count) == 0)
-	{	var ex = map.getView().calculateExtent(map.getSize());
-		ex = ol.proj.transformExtent (ex, map.getView().getProjection(), "EPSG:4326");
-		var z = map.getView().getZoom();
-		map.getLayers().forEach(function(l)
-		{	setLayerAttribution (l, ex, z, map._attributionMode);
-		});
-	}
-};
-
 /** Set attribution according to layers attribution and map position
 */
 ol.Map.Geoportail.prototype.setLayerAttributions = function()
-{	
-	console.log("setLayerAttributions")
-	if (this._attributionMode) 
+{	if (this._attributionMode) 
 	{	var ex = this.getView().calculateExtent(this.getSize());
 		ex = ol.proj.transformExtent (ex, this.getView().getProjection(), "EPSG:4326");
 		var z = this.getView().getZoom();
