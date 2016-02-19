@@ -178,8 +178,7 @@ ol.Map.Geoportail = function(options)
 	this.setLayerAttributions();
 
 	// Attribution on layers depend on position/zoom
-	this.getView().on ("change:center", this.setLayerAttributions, this);
-	this.getView().on ("change:resolution", this.setLayerAttributions, this);
+	this.on ("moveend", this.setLayerAttributions, this);
 };
 ol.inherits (ol.Map.Geoportail, ol.Map);
 
@@ -264,7 +263,17 @@ function delayAttribution (map, force)
 /** Set attribution according to layers attribution and map position
 */
 ol.Map.Geoportail.prototype.setLayerAttributions = function()
-{	if (this._attributionMode) delayAttribution(this);
+{	
+	console.log("setLayerAttributions")
+	if (this._attributionMode) 
+	{	var ex = this.getView().calculateExtent(this.getSize());
+		ex = ol.proj.transformExtent (ex, this.getView().getProjection(), "EPSG:4326");
+		var z = this.getView().getZoom();
+		var self = this;
+		this.getLayers().forEach(function(l)
+		{	setLayerAttribution (l, ex, z, self._attributionMode);
+		});
+	}
 };
 
 /** Set Attribution mode
