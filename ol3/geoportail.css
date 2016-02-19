@@ -8,8 +8,10 @@
 }
 .ol-attributionlogo .ol-attribution:not(.ol-collapsed)
 {	background: none;
-	height: auto;
 }
 .ol-attributionlogo .ol-attribution ul
 {	vertical-align: bottom;
+}
+.ol-attributionlogo .ol-attribution.ol-logo-only
+{	height: auto;
 }
