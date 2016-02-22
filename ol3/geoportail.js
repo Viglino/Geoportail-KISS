@@ -188,7 +188,7 @@ ol.inherits (ol.Map.Geoportail, ol.Map);
 function getAttrib (mode, a, o)
 {	// Default attribution > IGN
 	if (!a) 
-	{	return ol.Attribution.uniqueAttributionKey["IGN"] || ol.Attribution.getUniqueAttribution();
+	{	return ol.Attribution.uniqueAttributionKey["IGN"+(mode=="logo"?"_logo":"")] || ol.Attribution.getUniqueAttribution();
 	}
 	// Create attribution
 	if (mode=="logo") 
@@ -236,7 +236,7 @@ function setLayerAttribution (l, ex, z, mode)
 	// Layer group > set attribution for all layers in the groupe
 	else if (l.getLayers)
 	{	l.getLayers().forEach(function(layer)
-		{	setLayerAttribution (layer, ex, z);
+		{	setLayerAttribution (layer, ex, z, mode);
 		});
 	}
 }
