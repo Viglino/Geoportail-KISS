@@ -204,7 +204,8 @@ function getAttrib (mode, a, o)
 function setLayerAttribution (l, ex, z, mode)
 {	// Geoportail layer
 	if (l._originators)
-	{	var attrib = [];
+	{	var attrib = l.getSource().getAttributions();
+		attrib.splice(0, attrib.length);
 		var maxZoom = 0;
 		for (var a in l._originators)
 		{	var o = l._originators[a];
@@ -231,7 +232,7 @@ function setLayerAttribution (l, ex, z, mode)
 			}
 		}
 		if (!attrib.length) attrib.push ( getAttrib(mode) );
-		l.getSource().setAttributions(attrib);
+		// l.getSource().setAttributions(attrib);
 	}
 	// Layer group > set attribution for all layers in the groupe
 	else if (l.getLayers)
@@ -243,7 +244,7 @@ function setLayerAttribution (l, ex, z, mode)
 
 /** Set attribution according to layers attribution and map position
 */
-ol.Map.Geoportail.prototype.setLayerAttributions = function()
+ol.Map.Geoportail.prototype.setLayerAttributions = function(change)
 {	if (this._attributionMode) 
 	{	var ex = this.getView().calculateExtent(this.getSize());
 		ex = ol.proj.transformExtent (ex, this.getView().getProjection(), "EPSG:4326");
@@ -251,6 +252,7 @@ ol.Map.Geoportail.prototype.setLayerAttributions = function()
 		var self = this;
 		this.getLayers().forEach(function(l)
 		{	setLayerAttribution (l, ex, z, self._attributionMode);
+			if (change===true) l.changed();
 		});
 	}
 };
@@ -268,7 +270,7 @@ ol.Map.Geoportail.prototype.setAttributionsMode = function(mode)
 		{	l.getSource().setAttributions([ ol.source.Geoportail.prototype.attribution ]);
 		});
 	}
-	else this.setLayerAttributions();
+	else this.setLayerAttributions(true);
 };
 
 })();
