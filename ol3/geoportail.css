@@ -15,3 +15,6 @@
 .ol-attributionlogo .ol-attribution.ol-logo-only
 {	height: auto;
 }
+.ol-attributionlogo .ol-attribution.ol-uncollapsible 
+{	height: auto;
+}
