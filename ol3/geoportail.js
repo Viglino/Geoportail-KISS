@@ -12,7 +12,9 @@
 	olx.originators:
 	{	"orig1":
 		{	attribution: {String},
-			constraint: null|Array{bbox, maxZoom, minZoom},
+			constraint: Array{bbox, maxZoom, minZoom},
+			href: {String} link to informations
+			logo: {String} logo originator
 			maxZoom: {Number|null}
 			minZoom: {Number|null}
 		},
@@ -24,6 +26,7 @@
 */
 ol.layer.Base.prototype.setOriginators = function(o)
 {	this._originators = o;
+	this.changed();
 };
 
 ol.layer.Base.prototype.getOriginators = function()
@@ -216,10 +219,10 @@ function getAttrib (mode, a, o)
 	// Create attribution
 	if (mode=="logo" && o.logo) 
 	{	return ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
-				+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>', a+"_logo" ));
+				+'<img src="'+o.logo+'" title="&copy; '+(o.attribution||a)+'" /></a>', a+"_logo" ));
 	}
 	else
-	{	return ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'">'+a+'</a>', a ));
+	{	return ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'" title="&copy; '+(o.attribution||a)+'" >'+a+'</a>', a ));
 	}
 }
 
