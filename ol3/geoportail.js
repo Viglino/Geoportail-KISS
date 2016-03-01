@@ -5,7 +5,30 @@
 	ol.source.Geoportail : IGN's Geoportail WMTS source definition
 	ol.layer.Geoportail : IGN's Geoportail WMTS layer definition
 	ol.Map.Geoportail : IGN's Geoportail Map definition
+
+	Originators: ol.Map.Geoportail use originators to display attributions 
+	depending on position and zoom (constraints).
+	Just add originators to the layer to the layer using layer.getOriginator
+	olx.originators:
+	{	"orig1":
+		{	attribution: {String},
+			constraint: null|Array{bbox, maxZoom, minZoom},
+			maxZoom: {Number|null}
+			minZoom: {Number|null}
+		},
+		"orig2":{...}
+	}
 */
+
+/** Add a get/setOriginators function to layers
+*/
+ol.layer.Base.prototype.setOriginators = function(o)
+{	this._originators = o;
+};
+
+ol.layer.Base.prototype.getOriginators = function()
+{	return this._originators;
+};
 
 /**
 * @constructor IGN's Geoportail WMTS source definition
@@ -191,7 +214,7 @@ function getAttrib (mode, a, o)
 	{	return ol.Attribution.uniqueAttributionKey["IGN"+(mode=="logo"?"_logo":"")] || ol.Attribution.getUniqueAttribution();
 	}
 	// Create attribution
-	if (mode=="logo") 
+	if (mode=="logo" && o.logo) 
 	{	return ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
 				+'<img src="'+o.logo+'" title="&copy; '+a+'" /></a>', a+"_logo" ));
 	}
@@ -217,12 +240,13 @@ function setLayerAttribution (l, ex, z, mode)
 			}	
 		}
 		if (maxZoom < z) z = maxZoom;
-		if (z < l.getSource().getTileGrid().getMinZoom())
+		if (l.getSource().getTileGrid() && z < l.getSource().getTileGrid().getMinZoom())
 		{	z = l.getSource().getTileGrid().getMinZoom();
 		}
 		for (var a in l._originators)
 		{	var o = l._originators[a];
-			for (var i=0; i<o.constraint.length; i++)
+			if (!o.constraint.length) attrib.push (getAttrib(mode, a, o));
+			else for (var i=0; i<o.constraint.length; i++)
 			{	if ( z <= o.constraint[i].maxZoom 
 					&& z >= o.constraint[i].minZoom 
 					&& ol.extent.intersects(ex, o.constraint[i].bbox))
