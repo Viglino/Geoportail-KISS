@@ -289,7 +289,7 @@ ol.Map.Geoportail.prototype.setLayerAttributions = function(change)
 */
 ol.Map.Geoportail.prototype.setAttributionsMode = function(mode)
 {	this._attributionMode = (mode=="none" ? false : mode);
-	var div = this.getTargetElement().firstChild;
+	var div = this.getTargetElement().firstElementChild || this.getTargetElement().firstChild;
 	div.className = div.className.replace(/ ol\-attributionlogo/g, "");
 	if (mode=="logo") div.className += " ol-attributionlogo";
 	if (!this._attributionMode)
