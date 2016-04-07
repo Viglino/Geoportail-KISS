@@ -208,26 +208,38 @@ ol.Map.Geoportail = function(options)
 };
 ol.inherits (ol.Map.Geoportail, ol.Map);
 
+/** Format attribution to display on the map
+* @param {String} title
+* @param {String} long attribution 
+* @param {String} url
+* @param {String} logo
+* @return {String} formated attribution
+*/
+ol.Map.Geoportail.prototype.formatAttribution = function(title, attribution, href, logo)
+{	if (logo) return '<a href=\"'+href+'"><img src="'+logo+'" title="&copy; '+attribution+'" /></a>';
+	else return '&copy; <a href=\"'+href+'" title="&copy; '+attribution+'" >'+title+'</a>'
+};
+
 (function(){
 
 // Get default attribution
-function getAttrib (mode, a, o)
-{	// Default attribution > IGN
+function getAttrib (map, mode, a, o)
+{	var islogo = (mode=="logo" ? "logo":"");
+	// Default attribution > IGN
 	if (!a) 
-	{	return ol.Attribution.uniqueAttributionKey["IGN"+(mode=="logo"?"_logo":"")] || ol.Attribution.getUniqueAttribution();
+	{	return ol.Attribution.uniqueAttributionKey["IGN"+islogo] || ol.Attribution.getUniqueAttribution();
+	}
+	// Create attribution (if not exist)
+	var attr;
+	if (!ol.Attribution.uniqueAttributionKey[a+islogo])
+	{	attr = map.formatAttribution(a, o.attribution||a, o.href, islogo ? o.logo:null);
 	}
 	// Create attribution
-	if (mode=="logo" && o.logo) 
-	{	return ( ol.Attribution.getUniqueAttribution('<a href=\"'+o.href+'">'
-				+'<img src="'+o.logo+'" title="&copy; '+(o.attribution||a)+'" /></a>', a+"_logo" ));
-	}
-	else
-	{	return ( ol.Attribution.getUniqueAttribution('&copy; <a href=\"'+o.href+'" title="&copy; '+(o.attribution||a)+'" >'+a+'</a>', a ));
-	}
+	return ( ol.Attribution.getUniqueAttribution(attr, a+islogo ));
 }
 
 // Set attribution according to position / zoom
-function setLayerAttribution (l, ex, z, mode)
+function setLayerAttribution (map, l, ex, z, mode)
 {	// Geoportail layer
 	if (l._originators)
 	{	var attrib = l.getSource().getAttributions();
@@ -248,23 +260,23 @@ function setLayerAttribution (l, ex, z, mode)
 		}
 		for (var a in l._originators)
 		{	var o = l._originators[a];
-			if (!o.constraint.length) attrib.push (getAttrib(mode, a, o));
+			if (!o.constraint.length) attrib.push (getAttrib(map, mode, a, o));
 			else for (var i=0; i<o.constraint.length; i++)
 			{	if ( z <= o.constraint[i].maxZoom 
 					&& z >= o.constraint[i].minZoom 
 					&& ol.extent.intersects(ex, o.constraint[i].bbox))
-				{	attrib.push (getAttrib(mode, a, o));
+				{	attrib.push (getAttrib(map, mode, a, o));
 					break;
 				}
 			}
 		}
-		if (!attrib.length) attrib.push ( getAttrib(mode) );
+		if (!attrib.length) attrib.push ( getAttrib(map, mode) );
 		// l.getSource().setAttributions(attrib);
 	}
 	// Layer group > set attribution for all layers in the groupe
 	else if (l.getLayers)
 	{	l.getLayers().forEach(function(layer)
-		{	setLayerAttribution (layer, ex, z, mode);
+		{	setLayerAttribution (map, layer, ex, z, mode);
 		});
 	}
 }
@@ -278,7 +290,7 @@ ol.Map.Geoportail.prototype.setLayerAttributions = function(change)
 		var z = this.getView().getZoom();
 		var self = this;
 		this.getLayers().forEach(function(l)
-		{	setLayerAttribution (l, ex, z, self._attributionMode);
+		{	setLayerAttribution (self, l, ex, z, self._attributionMode);
 			if (change===true) l.changed();
 		});
 	}
@@ -411,4 +423,3 @@ ol.Attribution.getUniqueAttribution = function(a, key)
 		return u;
 	}
 };
-
