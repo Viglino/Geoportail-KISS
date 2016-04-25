@@ -56,6 +56,7 @@ ol.source.Geoportail = function(layer, options)
 				matrixIds: matrixIds
 			});
 	tg.minZoom = (options.minZoom ? options.minZoom:0);
+
 	var attr = [ ol.source.Geoportail.prototype.attribution ];
 	if (options.attributions) attr = options.attributions;
 
@@ -191,7 +192,7 @@ ol.Map.Geoportail = function(options)
 	function setGPPKey(key, layers)
 	{	for (var i in layers)
 		{	if (layers[i].getSource)
-			{	if (layers[i].getSource().setGPPKey) layers[i].getSource().setGPPKey(key);
+			{	if (!layers[i].getSource().gppKey && layers[i].getSource().setGPPKey) layers[i].getSource().setGPPKey(key);
 			}
 			else 
 			{	if (layers[i].getLayers) setGPPKey (key, layers[i].getLayers().getArray());
@@ -321,7 +322,7 @@ ol.Map.Geoportail.prototype.addLayer = function(layer)
 {	// Recursive setkey for group layers
 	function setLayerKey (layer, key)
 	{	// Geoportail layer
-		if (layer.getSource && layer.getSource() && layer.getSource().setGPPKey) layer.getSource().setGPPKey(key);
+		if (layer.getSource && layer.getSource() && !layer.getSource().gppKey && layer.getSource().setGPPKey) layer.getSource().setGPPKey(key);
 		// or a group layer
 		else if (layer.getLayers && layer.setGPPKey) 
 		{	layer.getLayers().forEach( function(l)
