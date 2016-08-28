@@ -91,7 +91,9 @@ ol.source.Geoportail.prototype.serviceURL = function()
 {	if (this._server) 
 	{	return this._server.replace (/^(https?:\/\/[^\/]*)(.*)$/, "$1/"+this.gppKey+"$2") ;
 	}
-	else return (window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/") +this.gppKey+ "/wmts" ;
+	else 
+	{	return (window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/") +this.gppKey+ "/geoportail/wmts" ;
+	}
 }
 
 /**
