@@ -208,7 +208,7 @@ geoportailConfig.jqautoconf = function(key, success, all)
 				service.bbox = getBbox (l.find("Extension BoundingBox:first").text());
 				service.desc = l.find("Abstract:first").text();
 				service.keys = l.find("Thematic").text();
-				service.qlook = l.find("QuickLook OnlineResource").attr("href");
+				service.qlook = l.find("QuickLook OnlineResource").attr("href").replace("http://","https://");
 				if (/NOPIC|defaut/.test(service.qlook)) delete service.qlook;
 				service.legend = [];
 				l.find("Legend").each(function()
@@ -226,7 +226,7 @@ geoportailConfig.jqautoconf = function(key, success, all)
 				{	o = 
 					{	href: $(this).find("URL").text(),
 						attribution: $(this).find("Attribution").text(),
-						logo: $(this).find("Logo").text(),
+						logo: $(this).find("Logo").text().replace("http://","https://"),
 						minZoom: 20,
 						maxZoom: 0,
 						constraint: []
