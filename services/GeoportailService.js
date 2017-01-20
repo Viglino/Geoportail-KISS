@@ -439,8 +439,7 @@ var GeoportailService = function (apiKey, proxy)
 					output: "json"
 				},
 				success: function (resp)
-				{	console.log (resp);
-					if (resp)
+				{	if (resp)
 					{	var xml = $.parseXML(resp.xml);
 						var e = $(xml).find("elevation");
 						var result=[];
@@ -453,8 +452,6 @@ var GeoportailService = function (apiKey, proxy)
 							};
 							result.push(r);
 						}
-						console.log(result.length);
-						console.log(result);
 					}
 					if (callback) callback(result);
 				},
