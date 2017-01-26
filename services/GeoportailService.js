@@ -295,6 +295,7 @@ var GeoportailService = function (apiKey, proxy)
 		@param callback (function) : fontion de retour
 		@param options
 			{	terr : 
+					-'ALL' tous les territoires;
 					-'METROPOLE' pour une recherche sur la métropole et la corse ;
 					-'DOMTOM' pour une recherche sur les DOM­ TOMs uniquement ;
 					-une liste de codes de départements ou codes INSEE de communes pour une recherche limitée à ces département ou commues spécifiés ;
@@ -323,7 +324,7 @@ var GeoportailService = function (apiKey, proxy)
 			dataType : "jsonp",
 			data : 
 			{	text : txt,
-            	terr: options.territoire?options.territoire:'METROPOLE'),	// 75;77;78;91;92;93;94;95
+            	terr: (options.territoire=="ALL" ? null : options.territoire), // METROPOLE | DOMTOM | 75;77;78;91;92;93;94;95
             	type: (type?type:'StreetAddress'), // StreetAddress,PositionOfInterest
             	maximumResponses: (options.max?options.max:'10')
             },
