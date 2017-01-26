@@ -323,7 +323,7 @@ var GeoportailService = function (apiKey, proxy)
 			dataType : "jsonp",
 			data : 
 			{	text : txt,
-            	terr: (options.territoire?options.territoire:'METROPOLE'),	// 75;77;78;91;92;93;94;95
+            	terr: options.territoire // ?options.territoire:'METROPOLE'),	// 75;77;78;91;92;93;94;95
             	type: (type?type:'StreetAddress'), // StreetAddress,PositionOfInterest
             	maximumResponses: (options.max?options.max:'10')
             },
