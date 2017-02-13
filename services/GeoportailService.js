@@ -280,12 +280,12 @@ var GeoportailService = function (apiKey, proxy)
 					if (callback) callback (result);
 				}
 				else
-				{	console.log ("noxml :"+resp);
+				{	console.log ("no-xml :"+resp);
 					callback (false, resp.http.status, resp.http.error);
 				}
 			},
-			error: function(resp)
-			{	console.log (resp);
+			error: function(resp, status, error)
+			{	if (callback) callback (false, status, error);
 			}
 		});
 	} ;
@@ -392,9 +392,8 @@ var GeoportailService = function (apiKey, proxy)
 					}
 					if (callback) callback(result);
 				},
-				error: function()
-				{	//console.log(arguments);
-					if (callback) callback(resp);
+				error: function(resp, status, error)
+				{	if (callback) callback (false, status, error);
 				}
 			});
 	};
@@ -430,7 +429,7 @@ var GeoportailService = function (apiKey, proxy)
 			lon = [lon];
 			lat = [lat];
 		}
-		$.ajax(
+		return $.ajax(
 			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevationLine.xml",
 				dataType : "jsonp",
 				data : 
@@ -456,9 +455,8 @@ var GeoportailService = function (apiKey, proxy)
 					}
 					if (callback) callback(result);
 				},
-				error: function()
-				{	//console.log(arguments);
-					if (callback) callback(resp);
+				error: function(resp, status, error)
+				{	if (callback) callback (false, status, error);
 				}
 			});
 	};
@@ -486,9 +484,8 @@ var GeoportailService = function (apiKey, proxy)
 					}
 					if (callback) callback(resp);
 				},
-				error: function()
-				{	//console.log(arguments);
-				 if (callback) callback(resp);
+				error: function(resp, status, error)
+				{	if (callback) callback (false, status, error);
 				}
 			});
 	};
