@@ -22,13 +22,15 @@
 	}
 */
 
-/** Add a get/setOriginators function to layers
+/** Add a setOriginators function to layers
 */
 ol.layer.Base.prototype.setOriginators = function(o)
 {	this._originators = o;
 	this.changed();
 };
 
+/** Add a getOriginators function to layers
+*/
 ol.layer.Base.prototype.getOriginators = function()
 {	return this._originators;
 };
@@ -37,7 +39,9 @@ ol.layer.Base.prototype.getOriginators = function()
 * @constructor IGN's Geoportail WMTS source definition
 * @extends {ol.source.WMTS}
 * @param {String=} layer Layer name.
-* @param {olx.source.OSMOptions=} options WMTS options + key: apiKey
+* @param {olx.source.OSMOptions=} options WMTS options 
+*	@param {string} options.key: apiKey
+*	@param {string} options.authentication: basic authentication as "login:pwd" string
 * @todo 
 */
 ol.source.Geoportail = function(layer, options)
@@ -56,7 +60,6 @@ ol.source.Geoportail = function(layer, options)
 				matrixIds: matrixIds
 			});
 	tg.minZoom = (options.minZoom ? options.minZoom:0);
-
 	var attr = [ ol.source.Geoportail.prototype.attribution ];
 	if (options.attributions) attr = options.attributions;
 
@@ -81,7 +84,10 @@ ol.source.Geoportail = function(layer, options)
 
 	// Save function to change apiKey
 	this._urlFunction = this.getTileUrlFunction();
-
+	// Load url using basic authentification
+	if (options.authentication) {
+		this.setTileLoadFunction(ol.source.Geoportail.tileLoadFunctionWithAuthentication(options.authentication, this.getFormat()));
+	}
 };
 ol.inherits (ol.source.Geoportail, ol.source.WMTS);
 
@@ -91,9 +97,7 @@ ol.source.Geoportail.prototype.serviceURL = function()
 {	if (this._server) 
 	{	return this._server.replace (/^(https?:\/\/[^\/]*)(.*)$/, "$1/"+this.gppKey+"$2") ;
 	}
-	else 
-	{	return (window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/") +this.gppKey+ "/geoportail/wmts" ;
-	}
+	else return (window.geoportailConfig ? geoportailConfig.url : "//wxs.ign.fr/") +this.gppKey+ "/wmts" ;
 }
 
 /**
@@ -111,7 +115,7 @@ ol.source.Geoportail.prototype.getGPPKey = function()
  * @param {String} the API key.
  * @api stable
  */
-ol.source.Geoportail.prototype.setGPPKey = function(key)
+ol.source.Geoportail.prototype.setGPPKey = function(key, authentication)
 {	this.gppKey = key;
 	var serviceURL = this.serviceURL();
 	this.setTileUrlFunction ( function()
@@ -122,7 +126,39 @@ ol.source.Geoportail.prototype.setGPPKey = function(key)
 		}
 		else return url;
 	});
+	// Load url using basic authentification
+	if (authentication) {
+		this.setTileLoadFunction(ol.source.Geoportail.tileLoadFunctionWithAuthentication(authentication, this.getFormat()));
+	}
 }
+
+/** Get a tile load function to load tiles with basic authentication
+ * @param {string} authentication as "login:pwd" string
+ * @param {string} format mime type
+ * @return {function} tile load function to load tiles with basic authentication
+ */
+ol.source.Geoportail.tileLoadFunctionWithAuthentication = function(authentication, format) {
+	return function(tile, src){
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", src);
+		xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication));
+		/* https://github.com/openlayers/openlayers/issues/4213
+		xhr.onload = function() {
+			var data = 'data:image/png;base64,' + btoa(unescape(encodeURIComponent(this.responseText)));
+			tile.getImage().src = data;
+		  };
+		*/
+		xhr.responseType = "arraybuffer";
+		xhr.onload = function () {
+			var arrayBufferView = new Uint8Array(this.response);
+			var blob = new Blob([arrayBufferView], { type: format });
+			var urlCreator = window.URL || window.webkitURL;
+			var imageUrl = urlCreator.createObjectURL(blob);
+			tile.getImage().src = imageUrl;
+		};
+		xhr.send();
+	};
+};
 
 /** Standard IGN-GEOPORTAIL attribution 
 */
@@ -130,12 +166,11 @@ ol.source.Geoportail.prototype.attribution = new ol.Attribution
 ({	html: '<a href="http://www.geoportail.gouv.fr/">Géoportail</a> &copy; <a href="http://www.ign.fr/">IGN-France</a>'
 });
 
-
 /**
 * @constructor IGN's Geoportail WMTS layer definition
 * @extends {ol.layer.Tile}
 * @param {options=} layer: Layer name, key: APIKey.
-* @param {olx.source.OSMOptions=} options WMTS options if not defined default are used
+* @param {olx.source.WMTSOptions=} options WMTS options if not defined default are used
 * @todo 
 */
 ol.layer.Geoportail = function(layer, options, tileoptions)
@@ -169,7 +204,6 @@ ol.layer.Geoportail = function(layer, options, tileoptions)
 	}
 	
 	ol.layer.Tile.call (this, options);
-
 };
 ol.inherits (ol.layer.Geoportail, ol.layer.Tile);
 
@@ -178,8 +212,9 @@ ol.inherits (ol.layer.Geoportail, ol.layer.Tile);
 * @constructor IGN's Geoportail Map definition
 * @extends {ol.Map}
 * @param {ol.Map.options=} add the API key to the map options (key)
-*	- key [String} Geoportail API key
-*   - attributionMode {none|text|logo} advanced attribution mode (attribution calculate on position / zoom)
+*	@param {string} options.key Geoportail API key
+*	@param {string} options.authentication: basic authentication as "login:pwd" string
+*   @param {none|text|logo} options.attributionMode advanced attribution mode (attribution calculate on position / zoom)
 * @todo 
 */
 ol.Map.Geoportail = function(options)
@@ -189,19 +224,20 @@ ol.Map.Geoportail = function(options)
 	// Set API key to the Geoportail layers
 	if (!options) options={};
 	this.gppKey = options.key;
+	this.authentication = options.authentication;
 
 	// Recursive function to set layers keys even in ol.layer.Group
-	function setGPPKey(key, layers)
+	function setGPPKey(key, authentication, layers)
 	{	for (var i in layers)
 		{	if (layers[i].getSource)
-			{	if (!layers[i].getSource().gppKey && layers[i].getSource().setGPPKey) layers[i].getSource().setGPPKey(key);
+			{	if (layers[i].getSource().setGPPKey) layers[i].getSource().setGPPKey(key, authentication);
 			}
 			else 
-			{	if (layers[i].getLayers) setGPPKey (key, layers[i].getLayers().getArray());
+			{	if (layers[i].getLayers) setGPPKey (key, authentication, layers[i].getLayers().getArray());
 			}
 		}
 	}
-	if (this.gppKey && options.layers) setGPPKey(this.gppKey, options.layers);
+	if (this.gppKey && options.layers) setGPPKey(this.gppKey, this.authentication, options.layers);
 
 	this._attributionMode = (options.attributionMode=="none" ? false : options.attributionMode||"text");
 	this.setLayerAttributions();
@@ -322,18 +358,20 @@ ol.Map.Geoportail.prototype.setAttributionsMode = function(mode)
 */
 ol.Map.Geoportail.prototype.addLayer = function(layer)
 {	// Recursive setkey for group layers
-	function setLayerKey (layer, key)
+	function setLayerKey (layer, key, authentication)
 	{	// Geoportail layer
-		if (layer.getSource && layer.getSource() && !layer.getSource().gppKey && layer.getSource().setGPPKey) layer.getSource().setGPPKey(key);
+		if (layer.getSource && layer.getSource() && layer.getSource().setGPPKey) {
+			layer.getSource().setGPPKey(key, authentication);
+		}
 		// or a group layer
 		else if (layer.getLayers && layer.setGPPKey) 
 		{	layer.getLayers().forEach( function(l)
-			{	setLayerKey (l, key)
+			{	setLayerKey (l, key, authentication)
 			});
 		}
 	}
 
-	if (this.gppKey) setLayerKey (layer, this.gppKey)
+	if (this.gppKey) setLayerKey (layer, this.gppKey, this.authentication)
 	var l = ol.Map.prototype.addLayer.apply (this, arguments);
 	this.setLayerAttributions();
 	return l;
@@ -342,10 +380,14 @@ ol.Map.Geoportail.prototype.addLayer = function(layer)
 /** 
 *	Set the API key to a group of layers 
 */
-ol.layer.Group.prototype.setGPPKey = function(key)
+ol.layer.Group.prototype.setGPPKey = function(key, authentication)
 {	this.getLayers().forEach( function(layer)
-	{	if (layer.getSource && layer.getSource() && layer.getSource().setGPPKey) layer.getSource().setGPPKey(key);
-		else if (layer.getLayers && layer.setGPPKey) layer.setGPPKey(this.gppKey);
+	{	if (layer.getSource && layer.getSource() && layer.getSource().setGPPKey) {
+			layer.getSource().setGPPKey(key, authentication);
+		}
+		else if (layer.getLayers && layer.setGPPKey) {
+			layer.setGPPKey(key, authentication);
+		}
 	});
 }
 
