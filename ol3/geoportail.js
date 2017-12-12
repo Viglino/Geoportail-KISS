@@ -41,7 +41,7 @@ ol.layer.Base.prototype.getOriginators = function()
 * @param {String=} layer Layer name.
 * @param {olx.source.OSMOptions=} options WMTS options 
 *	@param {string} options.key: apiKey
-*	@param {string} options.authentication: basic authentication as "login:pwd" string
+*	@param {string} options.authentication: basic authentication as btoa("login:pwd")
 * @todo 
 */
 ol.source.Geoportail = function(layer, options)
@@ -112,7 +112,8 @@ ol.source.Geoportail.prototype.getGPPKey = function()
 
 /**
  * Set the associated API key to the Map.
- * @param {String} the API key.
+ * @param {String} key the API key.
+ * @param {String} authentication as btoa("login:pwd")
  * @api stable
  */
 ol.source.Geoportail.prototype.setGPPKey = function(key, authentication)
@@ -133,15 +134,16 @@ ol.source.Geoportail.prototype.setGPPKey = function(key, authentication)
 }
 
 /** Get a tile load function to load tiles with basic authentication
- * @param {string} authentication as "login:pwd" string
+ * @param {string} authentication as btoa("login:pwd")
  * @param {string} format mime type
  * @return {function} tile load function to load tiles with basic authentication
  */
 ol.source.Geoportail.tileLoadFunctionWithAuthentication = function(authentication, format) {
+	if (!authentication) return undefined;
 	return function(tile, src){
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", src);
-		xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication));
+		xhr.setRequestHeader("Authorization", "Basic " + authentication);
 		/* https://github.com/openlayers/openlayers/issues/4213
 		xhr.onload = function() {
 			var data = 'data:image/png;base64,' + btoa(unescape(encodeURIComponent(this.responseText)));
@@ -213,7 +215,7 @@ ol.inherits (ol.layer.Geoportail, ol.layer.Tile);
 * @extends {ol.Map}
 * @param {ol.Map.options=} add the API key to the map options (key)
 *	@param {string} options.key Geoportail API key
-*	@param {string} options.authentication: basic authentication as "login:pwd" string
+*	@param {string} options.authentication: basic authentication as btoa("login:pwd")
 *   @param {none|text|logo} options.attributionMode advanced attribution mode (attribution calculate on position / zoom)
 * @todo 
 */

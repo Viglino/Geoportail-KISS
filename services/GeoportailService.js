@@ -23,7 +23,7 @@
  * GeoportailService
  * @param {string} apiKey 
  * @param {string} proxy 
- * @param {string} authentication as "login:pwd" string
+ * @param {string} authentication as btoa("login:pwd")
  */
 var GeoportailService = function (apiKey, proxy, authentication)
 {	// Decodage d'une adresse
@@ -175,7 +175,7 @@ var GeoportailService = function (apiKey, proxy, authentication)
 			url: geoportailConfig.url+apiKey+"/geoportail/ols",
 			beforeSend: function(xhr){ 
 				if (authentication) {
-					xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+					xhr.setRequestHeader("Authorization", "Basic " + authentication); 
 				}
 			},
 			dataType: "json",
@@ -278,7 +278,7 @@ var GeoportailService = function (apiKey, proxy, authentication)
 			url: geoportailConfig.url+apiKey+"/geoportail/ols",
 			beforeSend: function(xhr){ 
 				if (authentication) {
-					xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+					xhr.setRequestHeader("Authorization", "Basic " + authentication); 
 				}
 			},
 			dataType: "json",
@@ -339,7 +339,7 @@ var GeoportailService = function (apiKey, proxy, authentication)
 		{	url : geoportailConfig.url+apiKey+"/ols/apis/completion",
 			beforeSend: function(xhr){ 
 				if (authentication) {
-					xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+					xhr.setRequestHeader("Authorization", "Basic " + authentication); 
 				}
 			},
 			dataType : "json",
@@ -390,7 +390,7 @@ var GeoportailService = function (apiKey, proxy, authentication)
 			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevation.xml",
 				beforeSend: function(xhr){ 
 					if (authentication) {
-						xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+						xhr.setRequestHeader("Authorization", "Basic " + authentication); 
 					}
 				},
 				dataType : "json",
@@ -460,7 +460,7 @@ var GeoportailService = function (apiKey, proxy, authentication)
 			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevationLine.xml",
 				beforeSend: function(xhr){ 
 					if (authentication) {
-						xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+						xhr.setRequestHeader("Authorization", "Basic " + authentication); 
 					}
 				},
 				dataType : "json",
