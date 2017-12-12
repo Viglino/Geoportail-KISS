@@ -18,7 +18,14 @@
 	
 	Dependencies : jQuery
 */
-var GeoportailService = function (apiKey, proxy)
+
+/**
+ * GeoportailService
+ * @param {string} apiKey 
+ * @param {string} proxy 
+ * @param {string} authentication as "login:pwd" string
+ */
+var GeoportailService = function (apiKey, proxy, authentication)
 {	// Decodage d'une adresse
 	this.decodeAdresse = function(a)
 	{	var r =
@@ -166,7 +173,12 @@ var GeoportailService = function (apiKey, proxy)
 
 		$.ajax({
 			url: geoportailConfig.url+apiKey+"/geoportail/ols",
-			dataType: "jsonp",
+			beforeSend: function(xhr){ 
+				if (authentication) {
+					xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+				}
+			},
+			dataType: "json",
 			data: { output: 'json', xls: xls },
 			//timeout:5000,
 			success: function( resp )
@@ -264,7 +276,12 @@ var GeoportailService = function (apiKey, proxy)
 			
 		$.ajax({
 			url: geoportailConfig.url+apiKey+"/geoportail/ols",
-			dataType: "jsonp",
+			beforeSend: function(xhr){ 
+				if (authentication) {
+					xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+				}
+			},
+			dataType: "json",
 			data: { output: 'json', xls: xls },
 			success: function( resp )
 			{	if (resp.xml)
@@ -280,12 +297,12 @@ var GeoportailService = function (apiKey, proxy)
 					if (callback) callback (result);
 				}
 				else
-				{	console.log ("no-xml :"+resp);
+				{	console.log ("noxml :"+resp);
 					callback (false, resp.http.status, resp.http.error);
 				}
 			},
-			error: function(resp, status, error)
-			{	if (callback) callback (false, status, error);
+			error: function(resp)
+			{	console.log (resp);
 			}
 		});
 	} ;
@@ -295,7 +312,6 @@ var GeoportailService = function (apiKey, proxy)
 		@param callback (function) : fontion de retour
 		@param options
 			{	terr : 
-					-'ALL' tous les territoires;
 					-'METROPOLE' pour une recherche sur la métropole et la corse ;
 					-'DOMTOM' pour une recherche sur les DOM­ TOMs uniquement ;
 					-une liste de codes de départements ou codes INSEE de communes pour une recherche limitée à ces département ou commues spécifiés ;
@@ -321,10 +337,15 @@ var GeoportailService = function (apiKey, proxy)
 		if (options.poi) type = (type?type+',':'')+'PositionOfInterest';
 		$.ajax(
 		{	url : geoportailConfig.url+apiKey+"/ols/apis/completion",
-			dataType : "jsonp",
+			beforeSend: function(xhr){ 
+				if (authentication) {
+					xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+				}
+			},
+			dataType : "json",
 			data : 
 			{	text : txt,
-            	terr: (options.territoire=="ALL" ? "" : options.territoire), // METROPOLE | DOMTOM | 75;77;78;91;92;93;94;95
+            	terr: (options.territoire?(options.territoire=='ALL'?null:options.territoire):'METROPOLE'),	// 75;77;78;91;92;93;94;95
             	type: (type?type:'StreetAddress'), // StreetAddress,PositionOfInterest
             	maximumResponses: (options.max?options.max:'10')
             },
@@ -367,7 +388,12 @@ var GeoportailService = function (apiKey, proxy)
 		}
 		$.ajax(
 			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevation.xml",
-				dataType : "jsonp",
+				beforeSend: function(xhr){ 
+					if (authentication) {
+						xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+					}
+				},
+				dataType : "json",
 				data : 
 				{	lon: lontxt,
 					lat: lattxt,
@@ -392,8 +418,9 @@ var GeoportailService = function (apiKey, proxy)
 					}
 					if (callback) callback(result);
 				},
-				error: function(resp, status, error)
-				{	if (callback) callback (false, status, error);
+				error: function()
+				{	//console.log(arguments);
+					if (callback) callback(resp);
 				}
 			});
 	};
@@ -429,9 +456,14 @@ var GeoportailService = function (apiKey, proxy)
 			lon = [lon];
 			lat = [lat];
 		}
-		return $.ajax(
+		$.ajax(
 			{	url : geoportailConfig.url+apiKey+"/alti/rest/elevationLine.xml",
-				dataType : "jsonp",
+				beforeSend: function(xhr){ 
+					if (authentication) {
+						xhr.setRequestHeader("Authorization", "Basic " + btoa(authentication)); 
+					}
+				},
+				dataType : "json",
 				data : 
 				{	lon: lontxt,
 					lat: lattxt,
@@ -439,7 +471,8 @@ var GeoportailService = function (apiKey, proxy)
 					output: "json"
 				},
 				success: function (resp)
-				{	if (resp)
+				{	console.log (resp);
+					if (resp)
 					{	var xml = $.parseXML(resp.xml);
 						var e = $(xml).find("elevation");
 						var result=[];
@@ -452,11 +485,14 @@ var GeoportailService = function (apiKey, proxy)
 							};
 							result.push(r);
 						}
+						console.log(result.length);
+						console.log(result);
 					}
 					if (callback) callback(result);
 				},
-				error: function(resp, status, error)
-				{	if (callback) callback (false, status, error);
+				error: function()
+				{	//console.log(arguments);
+					if (callback) callback(resp);
 				}
 			});
 	};
@@ -484,8 +520,9 @@ var GeoportailService = function (apiKey, proxy)
 					}
 					if (callback) callback(resp);
 				},
-				error: function(resp, status, error)
-				{	if (callback) callback (false, status, error);
+				error: function()
+				{	//console.log(arguments);
+				 if (callback) callback(resp);
 				}
 			});
 	};
