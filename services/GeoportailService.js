@@ -1,8 +1,8 @@
 /*
 	Copyright (c) 2013 Jean-Marc VIGLINO, 
 	released under the CeCILL license (http://www.cecill.info/).
-	
-	GeoportailService : IGN's Geoportail srvices definition
+
+	GeoportailService : IGN's Geoportail services definition
 	
 	# Geocode OpenLS services :
 	 - geocode : Adress / geographical names search 
@@ -19,10 +19,10 @@
 	Dependencies : jQuery
 */
 
-/**
- * GeoportailService
- * @param {string} apiKey 
- * @param {string} proxy 
+/** Create a Geoportail service instance
+ * @constructor
+ * @param {string} apiKey the IGN's API Key
+ * @param {string} proxy a proxy url 
  * @param {string} authentication as btoa("login:pwd")
  */
 var GeoportailService = function (apiKey, proxy, authentication)
@@ -96,35 +96,35 @@ var GeoportailService = function (apiKey, proxy, authentication)
 			
 	};
 
-	/** Recherche par adresse
-		@param (String) : adresse
-		@param callback (function) : fontion de retour
-		@param options
-			{	bbox (object) : {lonmin, latmin, lonmax, latmax }
-				poi (bool) : recherche d'un poi
-			}
+	/** Search an adress
+		@param {String} queryString string address to search
+		@param {function} callback function called with a json response or false if no response
+			[	{	lon, lat:
+					adresse:
+					{	num: 
+						rue:
+					}
+					bbox:
+					[ lonmin, latmin, lonmax, latmax ]
+					match:
+					{	occuracy: 
+						type:
+					}
+					place:
+					{	commune:
+						departement:
+						insee:
+						municipality:
+						qualite:
+						territoire:
+					}
+				}
+			]		
+		@param {} options
+			@param {} options.bbox an object with lonmin, latmin, lonmax, latmax properties
+			@param {bool} options.poi true to search a POI false to search an address, default false
 		@return dans callback (false si pas de reponse)
-		[	{	lon, lat:
-				adresse:
-				{	num: 
-					rue:
-				}
-				bbox:
-				[ lonmin, latmin, lonmax, latmax ]
-				match:
-				{	occuracy: 
-					type:
-				}
-				place:
-				{	commune:
-					departement:
-					insee:
-					municipality:
-					qualite:
-					territoire:
-				}
-			}
-		]
+
 	*/
 	this.geocode = function (queryString, callback, options)
 	{	if (!options) options={};
@@ -204,38 +204,37 @@ var GeoportailService = function (apiKey, proxy, authentication)
 		});
 	} ;
 	
-	/** Service de geocodage inverse
-		@param (Number) : lon
-		@param (Number) : lat,
-		@param callback (function) : fontion de retour
-		@param options
-			{	dist (Number) : rayon de recherche
-				adresse (bool) : recherche par adresse
-				poi (bool) : recherche parmi les noms de lieux,
-				max : nombre maximum de reponse
-			}
-		@return dans callback (false si pas de reponse)
-		[	{	lon, lat:
-				adresse:
-				{	num: 
-					rue:
+	/** Reverse geocoding: get an address at a position
+		@param {Number} lon
+		@param {Number} lat,
+		@param {function} callback function called with a json response or false if no response
+			[	{	lon, lat:
+					adresse:
+					{	num: 
+						rue:
+					}
+					bbox:
+					[ lonmin, latmin, lonmax, latmax ]
+					match:
+					{	distance: 
+						type:
+					}
+					place:
+					{	commune:
+						departement:
+						insee:
+						municipality:
+						qualite:
+						territoire:
+					}
 				}
-				bbox:
-				[ lonmin, latmin, lonmax, latmax ]
-				match:
-				{	distance: 
-					type:
-				}
-				place:
-				{	commune:
-					departement:
-					insee:
-					municipality:
-					qualite:
-					territoire:
-				}
-			}
-		]
+			]
+		@param {} options
+			@param {Number} options.dist search radius
+			@param {bool} options.adresse search an address
+			@param {bool} options.poi search a POI
+			@param {bool} options.parcelle search a parcel
+			@param {Number} options.max maximum response size
 	*/
 	this.reverseGeocode = function( lon, lat, callback, options )
 	{	if (!options) options={};
@@ -308,27 +307,28 @@ var GeoportailService = function (apiKey, proxy, authentication)
 	} ;
 	
 	/** Service d'autocompletion
-		@param txt (String) : le texte a completer
-		@param callback (function) : fontion de retour
-		@param options
-			{	terr : 
-					-'METROPOLE' pour une recherche sur la métropole et la corse ;
-					-'DOMTOM' pour une recherche sur les DOM­ TOMs uniquement ;
-					-une liste de codes de départements ou codes INSEE de communes pour une recherche limitée à ces département ou commues spécifiés ;
-				adresse (bool) : recherche par adresse
-				poi (bool) : recherche parmi les noms de lieux,
-				max : nombre maximum de reponse
+		@param {string} txt string to complete
+		@param {function} callback function called with a json response or false if no response    
+			{	country: pays,    
+				type du localisant: 'StreetAddress' ou 'PositionOfInterest',    
+				fulltext: proposition complete,    
+				street: rue ou toponyme,    
+				city: ville,    
+				zipcode: code postal,    
+				classification: classification,    
+				kind: type,    
+				x: longitude,     
+				y: latitude    
 			}
-		@return dans callback
-		{	country : type du localisant : 'StreetAddress' ou 'PositionOfInterest' ;
-			fulltext : proposition complete ;
-			street : rue ou toponyme ;
-			city : ville ;
-			zipcode : code postal ;
-			classification : classification ;
-			kind : type ;
-			x,y : longitude, latitude.
-		}
+		@param {} options
+			@param {String} options.terr territory, default ALL
+- ALL: the whole world;    
+- METROPOLE: pour une recherche sur la métropole et la corse;        
+- DOMTOM: pour une recherche sur les DOM­ TOMs uniquement;    
+- une liste de codes de départements ou codes INSEE de communes pour une recherche limitée à ces département ou commues spécifiés ;
+			@param {bool} options.adresse search an address
+			@param {bool} options.poi search a POI
+			@param {bool} options.max maximum response size
 	*/
 	this.autocomplete = function (txt, callback, options)
 	{	if (!options) options = {};
@@ -356,17 +356,16 @@ var GeoportailService = function (apiKey, proxy, authentication)
 		});
 	};
 	
-	/** Service altimetrique
-		@param lon (Array|String|Number) : lon du point ou tableau de longitude
-		@param lat (Array|String|Number) : lat du point ou tableau de latitude
-		@param callback (function) : fontion de retour
-		@param s : nombre de chiffre significatif (pour limiter la taille de l'url)
-		@return dans callback (Array) : tableau de point
-		[	{	lon, lat : position
-				z : altitude
-				acc : precision
-			}
-		}		
+	/** Calculate alitude of a oint or of a list of point
+		@param {Array|String|Number} lon longitude du point ou tableau de longitude
+		@param {Array|String|Number} lat latitude du point ou tableau de latitude
+		@param {function} callback function called with a json response or false if no response
+			[	{	lon, lat : position
+					z : altitude
+					acc : precision
+				}
+			]		
+		@param {Number} s : nombre de chiffre significatif (pour limiter la taille de l'url)
 	*/
 	this.altimetry = function(lon,lat, callback, s)
 	{	if (!s) s = 4;
@@ -425,18 +424,17 @@ var GeoportailService = function (apiKey, proxy, authentication)
 			});
 	};
 	
-	/** Service altimetrique (necessite un proxy)
-		@param lon (Array|String|Number) : lon du point ou tableau de longitude
-		@param lat (Array|String|Number) : lat du point ou tableau de latitude
-		@param nb (Number) : Nombre de point de l'echantillon
-		@param callback (function) : fontion de retour
-		@param s : nombre de chiffre significatif (pour limiter la taille de l'url)
-		@return dans callback (Array) : tableau de point
-		[	{	lon, lat : position
-				z : altitude
-				acc : precision
-			}
-		}		
+	/** Calculate altitude on a LineString
+		@param {Array|String|Number} lon longitude du point ou tableau de longitude
+		@param {Array|String|Number} lat latitude du point ou tableau de latitude
+		@param {Number} nb Nombre de point de l'echantillon
+		@param {function} callback function called with a json response or false if no response
+			[	{	lon, lat : position
+					z : altitude
+					acc : precision
+				}
+			]		
+		@param {Number} s : nombre de chiffre significatif (pour limiter la taille de l'url)
 	*/
 	this.altimetryLine = function(lon,lat,nb, callback, s)
 	{	if (!s) s = 4;
