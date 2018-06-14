@@ -15,13 +15,14 @@
 	<link rel="stylesheet" href="../style.css" />
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<link rel="stylesheet" href="http://dev.openlayers.org/theme/default/style.css" />
-	<script type="text/javascript" src="http://dev.openlayers.org/OpenLayers.js"></script>
+
+	<link rel="stylesheet" href="http://openlayers.org/en/master/css/ol.css" />
+	<script type="text/javascript" src="http://openlayers.org/en/master/build/ol.js"></script>
 
 	<script type="text/javascript" src="../apikey.js"></script>
 	<script type="text/javascript" src="../geoportailconfig.js"></script>
-	<link rel="stylesheet" href="../openlayers/geoportail.css" />
-	<script type="text/javascript" src="../openlayers/geoportail.js"></script>
+	<link rel="stylesheet" href="../ol3/geoportail.css" />
+	<script type="text/javascript" src="../ol3/geoportail.js"></script>
 
 	<script type="text/javascript" src="GeoportailService.js"></script>
 
@@ -38,6 +39,14 @@
 	{	background-color:#369;
 		color:#fff;
 	}
+	#map {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: -1;
+	}
 	</style>
 	
 	<script type="text/javascript">
@@ -45,15 +54,54 @@
 	var service;
 	function initMap()
 	{	// Nouvelle carte
-		map = new OpenLayers.Map.Geoportail(apiKey, "map" );
-		map.addGeoportailLayers (["GEOGRAPHICALGRIDSYSTEMS.MAPS","ORTHOIMAGERY.ORTHOPHOTOS"])
+		var carte = new ol.layer.Geoportail("GEOGRAPHICALGRIDSYSTEMS.MAPS");
+		// Photo IGN
+		var ortho = new ol.layer.Geoportail("ORTHOIMAGERY.ORTHOPHOTOS", {visible:false});
 		
-		// Ajouter un controle pour les couches
-		map.addControl(new OpenLayers.Control.LayerSwitcher());
-		map.setCenterAtLonlat([2.424, 48.845], 15);
-		
+		// Les couches
+		var layers = [ortho,carte];
+
+		// La carte
+		var map = new ol.Map.Geoportail
+		({	target: 'map',
+			key: apiKey,
+			//renderer: ["canvas", "webgl", "dom"],  /* ["webgl", "canvas", "dom"] */
+			view: new ol.View
+			({	zoom: 7,
+				center: [288074, 6247982]
+			}),
+			controls: ol.control.defaults().extend
+			([	// new ol.control.FullScreen(),
+				// new ControlNord(),
+				new ol.control.ScaleLine()
+			]),
+			interactions: ol.interaction.defaults().extend
+			([	// new ol.interaction.DragRotateAndZoom()
+			]),
+			layers: layers
+		});
+	
 		// Service de geocodage
 		service = new GeoportailService(apiKey);
+		// Geocoage inverse
+		map.on ('click', function(e){
+			var lonlat = ol.proj.transform(e.coordinate, map.getView().getProjection(), 'EPSG:4326');
+			console.log(e, lonlat)
+			service.reverseGeocode(lonlat[0],lonlat[1], function(resp){
+				console.log(arguments)
+				var a = resp[0];
+				if (a) {
+					$('.adress').html(
+						a.adresse.num+' '+a.adresse.rue+'<br/>'
+						+ a.adresse.cpost +' '+a.place.commune
+					)
+				} else {
+					$('.adress').html('-');
+				}
+			});
+
+		});
+		// Geocodage direct
 		$("#query")
 			// Autocompletion
 			.keyup(function(e)
@@ -88,7 +136,7 @@
 			{	service.geocode($(this).val(), function(r) 
 					{	var a, html = "";
 						if (r && r.length)
-						{	map.setCenterAtLonlat([r[0].lon,r[0].lat]);
+						{	map.getView().setCenterAtLonlat([r[0].lon,r[0].lat]);
 							t = r.length +" réponses :";
 							for (var i=0; i<r.length; i++)
 							{	a = r[i];
@@ -115,8 +163,12 @@
 <body onload="initMap()">
 
 	<!-- DIV pour la carte -->
-	<div id="map" style="width:600px; height:400px; float:left;"></div>
-	<div style="display:inline-block; padding:0 0.5em">
+	<div id="map"></div>
+	<div style="box-shadow: 5px 5px 5px rgba(0,0,0,.5); padding:0.5em; float: right; background: #fff;">
+		<p> 
+			Position du clic:<br/>
+			<span class='adress' style="display: inline-block; width:90%; padding:.5em; border:1px solid #ccc;"></span>
+		</p>
 		<p style="margin:0;">Rechercher :</p>
 		<input id="adresse" type="checkbox" checked /><label for="adresse"> adresse</label>
 		<input id="poi" type="checkbox" /><label for="poi"> POI</label>
