@@ -164,9 +164,7 @@ ol.source.Geoportail.tileLoadFunctionWithAuthentication = function(authenticatio
 
 /** Standard IGN-GEOPORTAIL attribution 
 */
-ol.source.Geoportail.prototype.attribution = new ol.Attribution
-({	html: '<a href="http://www.geoportail.gouv.fr/">Géoportail</a> &copy; <a href="http://www.ign.fr/">IGN-France</a>'
-});
+ol.source.Geoportail.prototype.attribution = '<a href="http://www.geoportail.gouv.fr/">Géoportail</a> &copy; <a href="http://www.ign.fr/">IGN-France</a>';
 
 /** IGN's Geoportail WMTS layer definition
 * @constructor 
@@ -261,20 +259,51 @@ ol.Map.Geoportail.prototype.formatAttribution = function(title, attribution, hre
 
 (function(){
 
+	/**
+ * Static function : ol.Attribution.getUniqueAttribution
+ * Get a unique attribution ie. with the same attribution markup.
+ * if a key is provided get the attribution corresponding to the key.
+ * @param {olx.AttributionOptions} options Attribution options.
+ * @return {ol.Attribution} The attribution HTML.
+ * @api stable
+ */
+var uniqueAttributionList = [];
+var uniqueAttributionKey = {};
+
+var getUniqueAttribution = function(a, key) {
+	if (!a) a = "";
+	if (key)
+	{	var attr = uniqueAttributionKey[key];
+		if (!attr)
+		{	attr = uniqueAttributionKey[key] = a;
+		}
+		return attr;
+	}
+	else
+	{
+		// Search existing
+		for (var i=0; i<uniqueAttributionList.length; i++)
+			if (uniqueAttributionList[i] == a) return uniqueAttributionList[i];
+		// Create new one
+		uniqueAttributionList.push(a);
+		return a;
+	}
+};
+
 // Get default attribution
 function getAttrib (map, mode, a, o)
 {	var islogo = (mode=="logo" ? "logo":"");
 	// Default attribution > IGN
 	if (!a) 
-	{	return ol.Attribution.uniqueAttributionKey["IGN"+islogo] || ol.Attribution.getUniqueAttribution();
+	{	return uniqueAttributionKey["IGN"+islogo] || getUniqueAttribution();
 	}
 	// Create attribution (if not exist)
 	var attr;
-	if (!ol.Attribution.uniqueAttributionKey[a+islogo])
+	if (!uniqueAttributionKey[a+islogo])
 	{	attr = map.formatAttribution(a, o.attribution||a, o.href, islogo ? o.logo:null);
 	}
 	// Create attribution
-	return ( ol.Attribution.getUniqueAttribution(attr, a+islogo ));
+	return ( getUniqueAttribution(attr, a+islogo ));
 }
 
 // Set attribution according to position / zoom
@@ -282,6 +311,7 @@ function setLayerAttribution (map, l, ex, z, mode)
 {	// Geoportail layer
 	if (l._originators)
 	{	var attrib = l.getSource().getAttributions();
+		if (typeof(attrib)==='function') attrib = attrib();
 		attrib.splice(0, attrib.length);
 		var maxZoom = 0;
 		for (var a in l._originators)
@@ -435,36 +465,3 @@ ol.Map.prototype.getLayersBy = function(n,exp)
 	if (zoom) this.setZoom(zoom);
 }
 
-
-/**
- * Static function : ol.Attribution.getUniqueAttribution
- * Get a unique attribution ie. with the same attribution markup.
- * if a key is provided get the attribution corresponding to the key.
- * @param {olx.AttributionOptions} options Attribution options.
- * @return {ol.Attribution} The attribution HTML.
- * @api stable
- */
-ol.Attribution.uniqueAttributionList = [];
-ol.Attribution.uniqueAttributionKey = {};
-
-ol.Attribution.getUniqueAttribution = function(a, key)
-{	if (!a) a = { html:"" };
-	if (typeof(a)=="string") a = {html:a};
-	if (key)
-	{	var attr = this.uniqueAttributionKey[key];
-		if (!attr)
-		{	attr = this.uniqueAttributionKey[key] = new ol.Attribution(a);
-		}
-		return attr;
-	}
-	else
-	{
-		// Search existing
-		for (var i=0; i<this.uniqueAttributionList.length; i++)
-			if (this.uniqueAttributionList[i].getHTML() == a.html) return this.uniqueAttributionList[i];
-		// Create new one
-		var u = new ol.Attribution(a);
-		this.uniqueAttributionList.push(u);
-		return u;
-	}
-};
