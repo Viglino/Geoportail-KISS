@@ -158,6 +158,9 @@ ol.source.Geoportail.tileLoadFunctionWithAuthentication = function(authenticatio
 			var imageUrl = urlCreator.createObjectURL(blob);
 			tile.getImage().src = imageUrl;
 		};
+		xhr.onerror = function () {
+			tile.getImage().src = "";
+		};
 		xhr.send();
 	};
 };
@@ -259,58 +262,20 @@ ol.Map.Geoportail.prototype.formatAttribution = function(title, attribution, hre
 
 (function(){
 
-	/**
- * Static function : ol.Attribution.getUniqueAttribution
- * Get a unique attribution ie. with the same attribution markup.
- * if a key is provided get the attribution corresponding to the key.
- * @param {olx.AttributionOptions} options Attribution options.
- * @return {ol.Attribution} The attribution HTML.
- * @api stable
- */
-var uniqueAttributionList = [];
-var uniqueAttributionKey = {};
-
-var getUniqueAttribution = function(a, key) {
-	if (!a) a = "";
-	if (key)
-	{	var attr = uniqueAttributionKey[key];
-		if (!attr)
-		{	attr = uniqueAttributionKey[key] = a;
-		}
-		return attr;
-	}
-	else
-	{
-		// Search existing
-		for (var i=0; i<uniqueAttributionList.length; i++)
-			if (uniqueAttributionList[i] == a) return uniqueAttributionList[i];
-		// Create new one
-		uniqueAttributionList.push(a);
-		return a;
-	}
-};
-
 // Get default attribution
 function getAttrib (map, mode, a, o)
 {	var islogo = (mode=="logo" ? "logo":"");
-	// Default attribution > IGN
-	if (!a) 
-	{	return uniqueAttributionKey["IGN"+islogo] || getUniqueAttribution();
-	}
-	// Create attribution (if not exist)
-	var attr;
-	if (!uniqueAttributionKey[a+islogo])
-	{	attr = map.formatAttribution(a, o.attribution||a, o.href, islogo ? o.logo:null);
-	}
-	// Create attribution
-	return ( getUniqueAttribution(attr, a+islogo ));
-}
+
+	if (!a) return map.formatAttribution("IGN")
+	else return map.formatAttribution(a, o.attribution||a, o.href, islogo ? o.logo:null)
+};
 
 // Set attribution according to position / zoom
 function setLayerAttribution (map, l, ex, z, mode)
 {	// Geoportail layer
 	if (l._originators)
 	{	var attrib = l.getSource().getAttributions();
+		// ol v5
 		if (typeof(attrib)==='function') attrib = attrib();
 		attrib.splice(0, attrib.length);
 		var maxZoom = 0;
@@ -348,7 +313,7 @@ function setLayerAttribution (map, l, ex, z, mode)
 		{	setLayerAttribution (map, layer, ex, z, mode);
 		});
 	}
-}
+};
 
 /** Set attribution according to layers attribution and map position
 */
@@ -405,7 +370,7 @@ ol.Map.Geoportail.prototype.addLayer = function(layer)
 	var l = ol.Map.prototype.addLayer.apply (this, arguments);
 	this.setLayerAttributions();
 	return l;
-}
+};
 
 /** 
 *	Set the API key to a group of layers 
@@ -419,7 +384,7 @@ ol.layer.Group.prototype.setGPPKey = function(key, authentication)
 			layer.setGPPKey(key, authentication);
 		}
 	});
-}
+};
 
 /** Usefull functions
 */
@@ -432,7 +397,7 @@ ol.layer.Group.prototype.setGPPKey = function(key, authentication)
  */
 ol.Map.prototype.getLayersByName = function(exp)
 {	return this.getLayersBy("name",exp);
-}
+};
 
 /**
  * Get layers in a map giving an attribute
@@ -452,7 +417,7 @@ ol.Map.prototype.getLayersBy = function(n,exp)
 	}
 	findLayers(this);
 	return layers;
-}
+};
 
 /**
  * Set the center of the current view.
@@ -463,5 +428,4 @@ ol.Map.prototype.getLayersBy = function(n,exp)
  ol.View.prototype.setCenterAtLonlat = function(lonlat, zoom)
 {	this.setCenter (ol.proj.transform(lonlat, 'EPSG:4326', this.getProjection()));
 	if (zoom) this.setZoom(zoom);
-}
-
+};
