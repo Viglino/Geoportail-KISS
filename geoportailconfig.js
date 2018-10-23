@@ -183,7 +183,7 @@ geoportailConfig.jqautoconf = function(key, success, all)
 		for (var k=0; k<bbox.length; k++) bbox[k] = Number(bbox[k]);
 		return bbox;
 	}
-	$.ajax("http://wxs.ign.fr/"+key+"/autoconf/?output=json",
+	$.ajax("https://wxs.ign.fr/"+key+"/autoconf/?output=json",
 	{	dataType:"jsonp",
 		success:function(resp, status)
 		{	var xml = $.parseXML(resp.xml.replace(/xlink:|sld:|gpp:/g,""));
