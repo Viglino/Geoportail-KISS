@@ -10,6 +10,8 @@ Geoportail-KISS is a simple way to integrate mapping services of the French Geop
 - 	L.TileLayer.Geoportail : IGN's Geoportail WMTS layer to render Geoportail layers
 
 ## OL3
+> DEPRECATED - ol integration is now part of [ol-ext](https://github.com/Viglino/ol-ext), see [examples online](https://viglino.github.io/ol-ext/?q=geoportail)
+
 
 ## GMap (Google API)
 
